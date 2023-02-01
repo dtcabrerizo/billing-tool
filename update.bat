@@ -1,2 +1,2 @@
-git pull origin/master --force
-git reset --hard origin/master
+git pull origin/main --force
+git reset --hard origin/main
