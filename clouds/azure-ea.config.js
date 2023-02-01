@@ -251,7 +251,7 @@ const azureConfig = {
                                 )
                             )
                             .map(i => {                                
-                                i._calculatedQuantity = Math.round(i._quantity / 720);
+                                i._calculatedQuantity = i._quantity > 160 ? Math.ceil(i._quantity / 744) : 0;
                                 return i;
                             });
                         return ret;

@@ -16,18 +16,18 @@
     crossorigin="anonymous"></script>
 </head>
 
-<body class="container">
+<body class="container mt-4">
   <h1 class="d-flex align-items-baseline gap-4">
     <% if (type=='AWS' ) { %>
       <img src="/images/aws.svg" height="50">
-    <% } %>
-    <% if (type=='Azure-CSP' ) { %>
-      <img src="/images/azure-csp.svg" height="50">
-    <% } %>
-    <% if (type=='Azure-EA' ) { %>
-      <img src="/images/azure-ea.svg" height="50">
-    <% } %>
-        Resultado
+      <% } %>
+        <% if (type=='Azure-CSP' ) { %>
+          <img src="/images/azure-csp.svg" height="50">
+          <% } %>
+            <% if (type=='Azure-EA' ) { %>
+              <img src="/images/azure-ea.svg" height="50">
+              <% } %>
+                Resultado
   </h1>
   <small>Arquivo: <%= fileName %></small>
 
@@ -55,31 +55,31 @@
   </table>
 
   <% const createList=(title, name, list)=> { %>
-    <% const listName=`${name}List`; const sizes=[2, 4, 8, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208,
-      224, 240]; const getSize=n=> {
-      return sizes.filter(v => v >= n)[0] || sizes[sizes.length - 1];
+    <% const listName=`${name}List`; const memSizes=[2, 4, 8, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208,
+      224, 240]; const cpuSizes=[2, 4, 6, 8, 12, 16, 24, 32, 48, 64]; const getSize=(l,n)=> {
+      return l.filter(v => v >= n)[0] || l[l.length - 1];
       }
 
       const mRes = list?.reduce(
       (acc, v) => {
 
-      const cpuSize = getSize(v._cpu);
-      const memSize = getSize(v._mem);
+      const cpuSize = getSize(cpuSizes, v._cpu);
+      const memSize = getSize(memSizes, v._mem);
 
       if (!acc[cpuSize]) acc[cpuSize] = [];
       if (!acc[cpuSize][memSize]) acc[cpuSize][memSize] = 0;
       acc[cpuSize][memSize] = Number(acc[cpuSize][memSize]) + Number(v._calculatedQuantity);
       return acc;
-      }, Array(sizes.length)
+      }, []
       );
       %>
       <h3 class="d-flex">
         <div class="w-100">
           <%= title %>
             (<%= list?.reduce( (acc,it)=> acc += it._calculatedQuantity, 0) %>)
-            <% if (list.some( svc => svc.remarks?.length > 0)) { %>
-              <span class="badge text-black-50 me-3 bg-warning"> ! </span>
-            <% } %>
+              <% if (list.some( svc=> svc.remarks?.length > 0)) { %>
+                <span class="badge text-black-50 me-3 bg-warning"> ! </span>
+                <% } %>
         </div>
         <button class="btn btn-sm btn-primary me-3" data-bs-toggle="collapse" href="#<%= listName %>" role="button"
           aria-expanded="false" aria-controls="<%= listName %>">
@@ -104,15 +104,11 @@
                 <tr>
                   <td>
                     <%= v._type %>
-                    <% if (v.remarks?.length > 0) { %>
-                      <span 
-                        class="badge text-black-50 me-3 bg-warning"
-                        data-bs-toggle="tooltip" 
-                        data-bs-placement="top" 
-                        data-bs-html="true" 
-                        data-bs-title="<%= v.remarks.map(r => `<p>${r}</p>`).join('') %>"
-                        > ! </span>
-                    <% } %> 
+                      <% if (v.remarks?.length> 0) { %>
+                        <span class="badge text-black-50 me-3 bg-warning" data-bs-toggle="tooltip"
+                          data-bs-placement="top" data-bs-html="true"
+                          data-bs-title="<%= v.remarks.map(r => `<p>${r}</p>`).join('') %>"> ! </span>
+                        <% } %>
                   </td>
                   <td>
                     <%= v._description %>
@@ -139,7 +135,7 @@
         <thead>
           <tr>
             <th class="text-center"></th>
-            <% sizes.forEach(v=> { %>
+            <% memSizes.forEach(v=> { %>
               <th class="text-center">
                 <%= v %>
               </th>
@@ -147,24 +143,28 @@
           </tr>
         </thead>
         <tbody>
-          <% sizes.forEach( (cpuSize, row)=> {
-            if (row > 6) return;
-            %>
+          <% cpuSizes.forEach( (cpuSize, row)=> { %>
             <tr>
               <th class="text-center">
                 <%= cpuSize %>
               </th>
-              <% if (mRes?.[cpuSize]) { sizes.forEach((_, memSizeIndex)=> {
-                const memSize = sizes[memSizeIndex];
-                const qtd = mRes[cpuSize][memSize] || 0;
-                %> <td class="text-center">
-                  <%= qtd || '-' %>
-                </td>
-                <% }); } else { %>
-                  <% sizes.forEach(s=> { %>
-                    <td class="text-center">-</td>
+              <% if (mRes?.[cpuSize]) { %>
+              <% memSizes.forEach((_, memSizeIndex)=> {
+                  const memSize = memSizes[memSizeIndex];
+                  const qtd = mRes[cpuSize][memSize] || 0;
+                %> 
+                  <td class="text-center">
+                    <% if (qtd) { %>
+                    <%= qtd %>
+                    <% } else { %>
+                    &nbsp;
+                    <% } %>
+                  </td>
+                  <% }); } else { %>
+                    <% memSizes.forEach(s=> { %>
+                      <td class="text-center">&nbsp;</td>
                     <% }) %>
-                      <% } %>
+                  <% } %>
             </tr>
             <% }) %>
         </tbody>
@@ -174,108 +174,105 @@
 
       <% } %>
         <%- createList('Máquinas Virtuais', 'vm' , vm); %>
-        <%- createList('Banco de dados', 'rds' , rds); %>
+          <%- createList('Banco de dados', 'rds' , rds); %>
 
             <h3>Preço Serviços</h3>
             <div class="accordion" id="groups">
               <% Object.entries(groups).forEach( ([groupName, group])=> { %>
                 <% const groupId=groupName.replace(/\W/g, '_' ) %>
-                <% const hasRemark=group.some( svc => svc.remarks?.length > 0) %>
-                  <div class="accordion-item">
-                    <h2 class="accordion-header" id="header-group-<%= groupId %>">
-                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#group-<%= groupId %>" aria-expanded="true"
-                        aria-controls="group-<%= groupId %>">
-                        <div class="w-100 me-auto">
-                          <%= groupName %>
-                          <% if (hasRemark) { %>
-                            <span class="badge text-black-50 me-3 bg-warning"> ! </span>
-                          <% } %>    
-                        </div>
-                        <span class="badge text-bg-primary me-3">
-                          Complexidade: <%= group.complexidade %>
-                        </span>
-                        <span class="badge text-bg-secondary me-3">
-                          Volumetria: <%= group.volumetria %>
-                        </span>
-                      </button>
-                    </h2>
-                    <div id="group-<%= groupId %>" class="accordion-collapse collapse"
-                      aria-labelledby="header-group-<%= groupId %>" data-bs-parent="#groups">
-                      <div class="accordion-body">
+                  <% const hasRemark=group.some( svc=> svc.remarks?.length > 0) %>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="header-group-<%= groupId %>">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#group-<%= groupId %>" aria-expanded="true"
+                          aria-controls="group-<%= groupId %>">
+                          <div class="w-100 me-auto">
+                            <%= groupName %>
+                              <% if (hasRemark) { %>
+                                <span class="badge text-black-50 me-3 bg-warning"> ! </span>
+                                <% } %>
+                          </div>
+                          <span class="badge text-bg-primary me-3">
+                            Complexidade: <%= group.complexidade %>
+                          </span>
+                          <span class="badge text-bg-secondary me-3">
+                            Volumetria: <%= group.volumetria %>
+                          </span>
+                        </button>
+                      </h2>
+                      <div id="group-<%= groupId %>" class="accordion-collapse collapse"
+                        aria-labelledby="header-group-<%= groupId %>" data-bs-parent="#groups">
+                        <div class="accordion-body">
 
-                        <div class="accordion" id="service-<%= groupId %>">
-                          <% group.forEach( (service)=> { %>
-                            <% const serviceBSID=service.serviceId.replace(/\W/g, '_' ) %>
-                              <div class="accordion-item">
-                                <h4 class="accordion-header" id="header-service-<%= serviceBSID %>">
-                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#service-<%= serviceBSID %>" aria-expanded="true"
-                                    aria-controls="service-<%= serviceBSID %>">
-                                    <div class="w-100 me-auto">
-                                      <%= service.serviceId %>  
-                                      <% if (service.remarks?.length > 0) { %>
-                                        <span 
-                                          class="badge text-black-50 me-3 bg-warning"
-                                          data-bs-toggle="tooltip" 
-                                          data-bs-placement="top" 
-                                          data-bs-html="true" 
-                                          data-bs-title="<%= service.remarks.map(r => `<p>${r}</p>`).join('') %>"
-                                          > ! </span>
-                                      <% } %>                                   
+                          <div class="accordion" id="service-<%= groupId %>">
+                            <% group.forEach( (service)=> { %>
+                              <% const serviceBSID=service.serviceId.replace(/\W/g, '_' ) %>
+                                <div class="accordion-item">
+                                  <h4 class="accordion-header" id="header-service-<%= serviceBSID %>">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                      data-bs-target="#service-<%= serviceBSID %>" aria-expanded="true"
+                                      aria-controls="service-<%= serviceBSID %>">
+                                      <div class="w-100 me-auto">
+                                        <%= service.serviceId %>
+                                          <% if (service.remarks?.length> 0) { %>
+                                            <span class="badge text-black-50 me-3 bg-warning" data-bs-toggle="tooltip"
+                                              data-bs-placement="top" data-bs-html="true"
+                                              data-bs-title="<%= service.remarks.map(r => `<p>${r}</p>`).join('') %>"> !
+                                            </span>
+                                            <% } %>
+                                      </div>
+
+                                      <span class="badge text-black-50 me-3">
+                                        Total: <%= Intl.NumberFormat('pt-br').format(service.total) %>
+                                      </span>
+                                      <span class="badge text-bg-secondary me-3">
+                                        Volumetria: <%= service.volumetria %>
+                                      </span>
+                                    </button>
+                                  </h4>
+                                  <div id="service-<%= serviceBSID %>" class="accordion-collapse collapse"
+                                    aria-labelledby="header-group-<%= groupId %>"
+                                    data-bs-parent="#service-<%= groupId %>">
+                                    <div class="accordion-body">
+                                      <table class="table table-sm table-hover table-striped small table-borderless">
+                                        <thead>
+                                          <th>Descrição</th>
+                                          <th>Utilização</th>
+                                        </thead>
+                                        <tbody>
+                                          <% service.items.forEach( (item)=> { %>
+                                            <tr>
+                                              <td>
+                                                <%= item.Description %>
+                                              </td>
+                                              <td>
+                                                <%= item.Quantity %>
+                                              </td>
+
+                                            </tr>
+                                            <% }) %>
+
+                                        </tbody>
+                                      </table>
                                     </div>
-
-                                    <span class="badge text-black-50 me-3">
-                                      Total: <%= Intl.NumberFormat('pt-br').format(service.total) %>
-                                    </span>
-                                    <span class="badge text-bg-secondary me-3">
-                                      Volumetria: <%= service.volumetria %>
-                                    </span>
-                                  </button>
-                                </h4>
-                                <div id="service-<%= serviceBSID %>" class="accordion-collapse collapse"
-                                  aria-labelledby="header-group-<%= groupId %>"
-                                  data-bs-parent="#service-<%= groupId %>">
-                                  <div class="accordion-body">
-                                    <table class="table table-sm table-hover table-striped small table-borderless">
-                                      <thead>
-                                        <th>Descrição</th>
-                                        <th>Utilização</th>
-                                      </thead>
-                                      <tbody>
-                                        <% service.items.forEach( (item)=> { %>
-                                          <tr>
-                                            <td>
-                                              <%= item.Description %>
-                                            </td>
-                                            <td>
-                                              <%= item.Quantity %>
-                                            </td>
-
-                                          </tr>
-                                          <% }) %>
-
-                                      </tbody>
-                                    </table>
                                   </div>
-                                </div>
 
-                              </div>
-                              <% }) %>
+                                </div>
+                                <% }) %>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <% }) %>
+                    <% }) %>
             </div>
 
 
-          </body>
-          <script>
-            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-          </script>
-          
+</body>
+<script>
+  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+  const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+</script>
+
 <pre>
   <%- //JSON.stringify(vm, null, 4) %>
 </pre>

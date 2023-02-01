@@ -41,7 +41,7 @@ const awsConfig = {
             "steps": [
                 { "type": "filter", "field": "UsageType", "operator": "sw", "value": "Node:" }
             ], "reference": 720, "increment": 1
-        },{
+        }, {
             "serviceId": "AmazonRedshift", "group": "database",
             "steps": [
                 { "type": "filter", "field": "UsageType", "operator": "ct", "value": "*GB*" },
@@ -191,13 +191,14 @@ const awsConfig = {
         "steps": [
             { "type": "filter", "field": "ProductCode", "operator": "eq", "value": "AmazonEC2" },
             { "type": "filter", "field": "UsageType", "operator": "ct", "value": "BoxUsage" },
+            { "type": "filter", "field": "ItemDescription", "operator": "nct", "value": "SQL" },
             {
                 "type": "function",
                 fn:
                     data => {
                         data.forEach(item => {
                             item._description = item.ItemDescription;
-                            item._calculatedQuantity = Math.round(item.UsageQuantity / 720)
+                            item._calculatedQuantity = item.UsageQuantity > 160 ? Math.ceil(item.UsageQuantity / 744) : 0;
                             item._type = item.UsageType.replace(/.*BoxUsage:([^\n:]+)/, '$1');
                         });
                         return data;
@@ -207,18 +208,30 @@ const awsConfig = {
     },
     "rds": {
         "steps": [
-            { "type": "filter", "field": "ProductCode", "operator": "eq", "value": "AmazonRDS" },
-            { "type": "filter", "field": "UsageType", "operator": "ct", "value": "usage:db" },
+            {
+                "type": "function", fn: data => {
+                    return data.filter(it => {
+                        if (it.ProductCode == 'AmazonRDS' && it.UsageType.indexOf('usage:db') >= 0) return true;
+                        if (it.ProductCode == 'AmazonEC2' && it.UsageType.indexOf('BoxUsage') >= 0 && it.ItemDescription.indexOf('SQL') >= 0) return true;
+                        return false;
+                    });
+                }
+            },
             {
                 "type": "function",
                 fn:
                     data => {
                         data.forEach(item => {
-                            item._calculatedQuantity = Math.round(item.UsageQuantity / 720)
+                            item._calculatedQuantity = item.UsageQuantity > 160 ? Math.ceil(item.UsageQuantity / 744) : 0;
                             item._description = item.ItemDescription;
-                            item._type = item.UsageType
-                                .replace(/.*:(db.*)/i, '$1')
-                                .replace(/xl$/, 'xlarge');
+                            if (item.ProductCode == 'AmazonRDS') {
+                                item._type = item.UsageType
+                                    .replace(/.*:(db.*)/i, '$1')
+                                    .replace(/xl$/, 'xlarge');
+                            } else if (item.ProductCode == 'AmazonEC2') {
+                                item._type = item.UsageType
+                                    .replace(/.*BoxUsage:([^\n:]+)/, '$1');
+                            }
                         });
                         return data;
                     }

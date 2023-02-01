@@ -79,9 +79,10 @@ class Processor {
         // Preenche as informações de CPU e Memória de cada VM
         vm?.forEach(v => {
             v.remarks = [];
-            if (!this.config.VMSpecs?.[v._type]) v.remarks.push(`Tipo de VM não encontrado (${v._type})`)
-            v._cpu = this.config.VMSpecs?.[v._type]?.vCPUs;
-            v._mem = this.config.VMSpecs?.[v._type]?.mem;
+            const specs = this.config.VMSpecs?.[v._type] || this.config.RDSSpecs?.[v._type];
+            if (!specs) v.remarks.push(`Tipo de VM não encontrado (${v._type})`)
+            v._cpu = specs?.vCPUs;
+            v._mem = specs?.mem;
         });
 
         // Lista os Bancos de Dados contidos no billing, executando os steps de filtro
@@ -93,9 +94,10 @@ class Processor {
         // Preenche as informações de CPU e Memória de cada banco de dados
         rds?.forEach(v => {
             if (v._type) {
-                if (!this.config.RDSSpecs?.[v._type]) v.remarks.push(`Tipo de RDS não encontrado (${v._type})`)
-                v._cpu = this.config.RDSSpecs?.[v._type]?.vCPUs;
-                v._mem = this.config.RDSSpecs?.[v._type]?.mem;
+                const specs = this.config.RDSSpecs?.[v._type] || this.config.VMSpecs?.[v._type];
+                if (!specs) v.remarks.push(`Tipo de RDS não encontrado (${v._type})`)
+                v._cpu = specs?.vCPUs;
+                v._mem = specs?.mem;
             }
         });
 
