@@ -113,7 +113,7 @@ const awsConfig = {
         }, {
             "serviceId": "AWSDirectConnect", "group": "network",
             "steps": [
-                { "type": "filter", "field": "UsageType", "operator": "sw", "value": "Create" }
+                { "type": "filter", "field": "Operation", "operator": "sw", "value": "Create" }
             ], "reference": 1, "increment": 1000000000
         }, {
             "serviceId": "awskms", "group": "security",
@@ -211,8 +211,8 @@ const awsConfig = {
             {
                 "type": "function", fn: data => {
                     return data.filter(it => {
-                        if (it.ProductCode == 'AmazonRDS' && it.UsageType.indexOf('usage:db') >= 0) return true;
-                        if (it.ProductCode == 'AmazonEC2' && it.UsageType.indexOf('BoxUsage') >= 0 && it.ItemDescription.indexOf('SQL') >= 0) return true;
+                        if (it.ProductCode == 'AmazonRDS' && /usage:db/i.test(it.UsageType)) return true;
+                        if (it.ProductCode == 'AmazonEC2' && /BoxUsage/i.test(it.UsageType) && it.ItemDescription.indexOf('SQL') >= 0) return true;
                         return false;
                     });
                 }

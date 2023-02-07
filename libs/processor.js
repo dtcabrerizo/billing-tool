@@ -12,7 +12,7 @@ class Processor {
             d._serviceId = d[this.config.itemOutput.ServiceId];
             d._description = d[this.config.Description];
         })
-        
+
         // Efetua operação inicial
         this.config?.steps?.forEach(step => {
             data = runStep(data, step);
@@ -21,7 +21,11 @@ class Processor {
         // Calcula serviços
         console.log('Calculando serviços...');
 
+        let otherServices = [...data];
+
         const services = this.config.services.reduce((acc, service, index) => {
+
+            //if (service.serviceId.indexOf('DTU') > 0) debugger;
 
             // console.log(`(${index + 1}/${this.config.services.length}) Executando Serviço: ${service.serviceId}...`);
 
@@ -32,13 +36,15 @@ class Processor {
 
             const serviceData = runStep(data, options);
 
+            otherServices = otherServices.filter(it => !serviceData.some(svc => svc == it));
+
             // Lista itens do billing através dos filtros
             const items = service.steps?.reduce((acc, step) => {
                 acc = runStep(acc, step);
                 return acc;
             }, serviceData) || serviceData;
 
-            
+
             // Verifica se encontrou registros mas filtrou todos
             let remarks = [];
             if (serviceData.length > 0 && items.length === 0) {
@@ -102,10 +108,11 @@ class Processor {
         });
 
         // Monta objeto de retorno
-        const result = {vm, rds};
+        const result = { vm, rds };
 
         // Agrupa serviços nos grupos configurados
         result.groups = runStep(services, { type: 'groupby', field: 'group' });
+
 
         // Calcula complexidade e volumetria de cada grupo
         // Complexidade considera a soma da volumetria de todos os serviços divido por 4, ou 1 se for maior que 4
@@ -114,6 +121,24 @@ class Processor {
             group.complexidade = sumVolumetria > 4 ? 1.0 : sumVolumetria / 4.0;
             group.volumetria = group.reduce((acc, it) => acc += (it.volumetria || 0), 0);
         });
+
+        result.volumetria = Object.values(result.groups).reduce((acc,group)=> acc += group.volumetria, 0);
+        result.complexidade = Object.values(result.groups).reduce((acc,group)=> acc += group.complexidade, 0);
+
+
+        otherServices = otherServices.map(it => {
+            return Object.entries(this.config.itemOutput).reduce((acc, [key, value]) => {
+                acc[key] = it[value];
+                return acc;
+            }, {});
+        });
+
+        otherServices = runStep(otherServices,  { type: 'groupby', field: 'ServiceId' });
+
+        result.groups.otherServices = Object.entries(otherServices).map( ([serviceId, items]) => {
+            return { serviceId, items };
+        });
+
 
         // Calcula custo total de nuvem
         result.totalCost = this.config.totalCost?.reduce((acc, step) => {

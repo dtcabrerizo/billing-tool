@@ -161,14 +161,34 @@ const azureConfig = {
         }, {
             "serviceId": "Azure Database for (MySQL/PostgreSQL/MariaDB)",
             "group": "database",
-            "customMainFilter": { "field": "MeterSubCategory", "operator": "sw", "value": "Azure Database for" },
+            "customMainFilter": { "field": "MeterCategory", "operator": "sw", "value": "Azure Database for" },
             "reference": 720, "increment": 5
         }, {
             "serviceId": "SQL Database",
             "group": "database",
-            "customMainFilter": { "field": "MeterSubCategory", "operator": "sw", "value": "SQL Database" },
+            "customMainFilter": { "field": "MeterCategory", "operator": "sw", "value": "SQL Database" },
             "steps": [
                 { "type": "filter", "field": "MeterName", "operator": "eq", "value": "vCore" }
+            ], "reference": 720, "increment": 5
+        }, {
+            "serviceId": "SQL Database (DTU)",
+            "group": "database",
+            "customMainFilter": { "field": "MeterCategory", "operator": "sw", "value": "SQL Database" },
+            "steps": [ // Filtro para avisar que existe SQL com DTU no billing
+                { "type": "filter", "field": "MeterName", "operator": "ct", "value": "DTU" },
+                { "type": "groupby", "field": "ResourceURI" },
+                { "type": "function", "fn": 
+                    data => {
+                        return Object.entries(data).map( ([_, items]) => {
+                            const it = items[0];
+                            const unit = Number(it.Unit.replace(/\D/g, ''));
+                            const qty = items.reduce( (acc,it) => acc += it.Quantity * 24 / unit, 0);
+                            it._quantity = qty;
+                            it.Quantity = qty;
+                            return it;
+                        });
+                    }
+                }
             ], "reference": 720, "increment": 5
         }, { // REVISAR
             "serviceId": "SQL Managed Instance",
@@ -258,7 +278,7 @@ const azureConfig = {
     },
     "rds": {
         "steps": [
-            { "type": "filter", "field": "MeterCategory", "operator": "in", "value": ["SQL Database", "Azure Database for MySQL"] },
+            { "type": "filter", "field": "Meter Category", "operator": "in", "value": ["SQL Database", "Azure Database for MySQL", "Azure Database for PostgreSQL"] },
             { "type": "filter", "field": "MeterSubCategory", "operator": "nct", "value": "License" },
             { "type": "filter", "field": "MeterName", "operator": "eq", "value": "vCore" },
             { "type": "groupby", "field": "ResourceURI" },
