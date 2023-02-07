@@ -198,7 +198,7 @@ const awsConfig = {
                     data => {
                         data.forEach(item => {
                             item._description = item.ItemDescription;
-                            item._calculatedQuantity = item.UsageQuantity > 160 ? Math.ceil(item.UsageQuantity / 744) : 0;
+                            item._calculatedQuantity = item.UsageQuantity > 160 ? Math.ceil(Math.floor(item.UsageQuantity) / 744) : 0;
                             item._type = item.UsageType.replace(/.*BoxUsage:([^\n:]+)/, '$1');
                         });
                         return data;

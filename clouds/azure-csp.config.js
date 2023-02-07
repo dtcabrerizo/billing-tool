@@ -116,9 +116,11 @@ const azureConfig = {
             "group": "network",
             "reference": 720, "increment": 1
         }, { // REVISAR
-            "serviceId": "Express Route",
+            "serviceId": "ExpressRoute",
             "group": "network",
-            "customMainFilter": { "field": "MeterSubCategory", "operator": "sw", "value": "Express Route" },
+            "steps": [
+                { "type": "filter", "field": "MeterName", "operator": "ct", "value": "Gateway" }
+            ],
             "reference": 1, "increment": 10000000000
         }, { // REVISAR
             "serviceId": "Azure Active Directory Domain Services",
@@ -150,7 +152,7 @@ const azureConfig = {
         }, {
             "serviceId": "Azure Redis Cache",
             "group": "database",
-            "customMainFilter": { "field": "MeterSubCategory", "operator": "sw", "value": "Azure Redis Cache" },
+            "customMainFilter": { "field": "MeterCategory", "operator": "ct", "value": "Redis Cache" },
             "reference": 720, "increment": 10
         }, { // REVISAR
             "serviceId": "Azure Cosmos DB",
@@ -198,10 +200,20 @@ const azureConfig = {
                 { "type": "filter", "field": "MeterName", "operator": "ct", "value": "vCore" }
             ], "reference": 720, "increment": 5
         }, { // REVISAR
-            "serviceId": "ServiceBus",
+            "serviceId": "Service Bus",
             "group": "serverless",
             "steps": [
-                { "type": "filter", "field": "MeterName", "operator": "ew", "value": "Messaging Operations" }
+                { "type": "filter", "field": "MeterName", "operator": "ew", "value": "Messaging Operations" },
+                { "type": "function", "fn": 
+                    data => {
+                        data.forEach(item => { 
+                            const qty = item['Consumed Quantity'] * 10000000;
+                            item['Consumed Quantity'] = qty;
+                            item._quantity = qty;
+                        });
+                        return data;
+                    }
+                }
             ], "reference": 30000000, "increment": 10
         }, { 
             "serviceId": "Queues",

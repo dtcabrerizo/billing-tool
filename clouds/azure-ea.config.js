@@ -102,10 +102,11 @@ const azureConfig = {
             "reference": 2048, "increment": 10
         }, {
             "serviceId": "IP Addresses",
+            "customMainFilter": { "field": "Meter Sub-Category", "operator": "eq", "value": "IP Addresses" },
             "group": "network",
             "reference": 720, "increment": 20
         }, {
-            "serviceId": "Azure CDN",
+            "serviceId": "Content Delivery Network",
             "group": "network",
             "reference": 15000000, "increment": 1
         }, {
@@ -125,9 +126,11 @@ const azureConfig = {
             "group": "network",
             "reference": 720, "increment": 1
         }, {
-            "serviceId": "Express Route",
+            "serviceId": "ExpressRoute",
             "group": "network",
-            "customMainFilter": { "field": "Meter Sub-Category", "operator": "sw", "value": "Express Route" },
+            "steps": [
+                { "type": "filter", "field": "Meter Name", "operator": "ct", "value": "Gateway" }
+            ],
             "reference": 1, "increment": 10000000000
         }, {
             "serviceId": "Azure Active Directory Domain Services",
@@ -159,7 +162,7 @@ const azureConfig = {
         }, {
             "serviceId": "Azure Redis Cache",
             "group": "database",
-            "customMainFilter": { "field": "Meter Sub-Category", "operator": "sw", "value": "Azure Redis Cache" },
+            "customMainFilter": { "field": "Meter Category", "operator": "ct", "value": "Redis Cache" },
             "reference": 720, "increment": 10
         }, {
             "serviceId": "Azure Cosmos DB",
@@ -209,10 +212,20 @@ const azureConfig = {
                 { "type": "filter", "field": "Meter Name", "operator": "ct", "value": "vCore" }
             ], "reference": 720, "increment": 5
         }, {
-            "serviceId": "ServiceBus",
+            "serviceId": "Service Bus",
             "group": "serverless",
             "steps": [
-                { "type": "filter", "field": "Meter Name", "operator": "ew", "value": "Messaging Operations" }
+                { "type": "filter", "field": "Meter Name", "operator": "ew", "value": "Messaging Operations" },
+                { "type": "function", "fn": 
+                    data => {
+                        data.forEach(item => { 
+                            const qty = item['Consumed Quantity'] * 10000000;
+                            item['Consumed Quantity'] = qty;
+                            item._quantity = qty;
+                        });
+                        return data;
+                    }
+                }
             ], "reference": 30000000, "increment": 10
         }, {
             "serviceId": "Queues",

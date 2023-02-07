@@ -25,7 +25,7 @@ class Processor {
 
         const services = this.config.services.reduce((acc, service, index) => {
 
-            //if (service.serviceId.indexOf('DTU') > 0) debugger;
+            // if (service.serviceId.indexOf('Pipeline') >= 0) debugger;
 
             // console.log(`(${index + 1}/${this.config.services.length}) Executando Serviço: ${service.serviceId}...`);
 
