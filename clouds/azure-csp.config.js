@@ -19,10 +19,10 @@ const azureConfig = {
             "serviceId": "Azure DevOps - Pipelines",
             "customMainFilter": { "field": "MeterSubCategory", "operator": "eq", "value": "Azure Pipelines" },
             "group": "container", "reference": 5, "increment": 5
-        }, { // REVISAR
+        }, { 
             "serviceId": "Container Instances",
             "group": "container",
-            "customMainFilter": { "field": "MeterSubCategory", "operator": "eq", "value": "Container Instances" },
+            "customMainFilter": { "field": "MeterSubCategory", "operator": "sw", "value": "Container Instances" },
             "steps": [
                 { "type": "filter", "field": "MeterName", "operator": "eq", "value": "vCPU Duration" }
             ], "reference": 720, "increment": 10
@@ -170,7 +170,7 @@ const azureConfig = {
             "group": "database",
             "customMainFilter": { "field": "MeterCategory", "operator": "sw", "value": "SQL Database" },
             "steps": [
-                { "type": "filter", "field": "MeterName", "operator": "eq", "value": "vCore" }
+                { "type": "filter", "field": "MeterName", "operator": "nct", "value": "Storage" }
             ], "reference": 720, "increment": 5
         }, {
             "serviceId": "SQL Database (DTU)",
@@ -290,14 +290,15 @@ const azureConfig = {
     },
     "rds": {
         "steps": [
-            { "type": "filter", "field": "Meter Category", "operator": "in", "value": ["SQL Database", "Azure Database for MySQL", "Azure Database for PostgreSQL"] },
+            { "type": "filter", "field": "MeterCategory", "operator": "in", "value": ["SQL Database", "Azure Database for MySQL", "Azure Database for PostgreSQL"] },
             { "type": "filter", "field": "MeterSubCategory", "operator": "nct", "value": "License" },
-            { "type": "filter", "field": "MeterName", "operator": "eq", "value": "vCore" },
+            { "type": "filter", "field": "MeterSubCategory", "operator": "nct", "value": "Storage" },
             { "type": "groupby", "field": "ResourceURI" },
             {
                 "type": "function", 
                 fn:
                     data => {
+                        const remarks = [];
                         const ret = Object
                             .entries(data)
                             .map(
@@ -306,19 +307,24 @@ const azureConfig = {
                                         acc = {
                                             resourceId,
                                             count: info.length,   
-                                            _description: it.Product,                                    
+                                            _description: it.Product || it.ProductName,                                    
                                             _cpu: Math.max(acc._cpu || 0, it['Quantity'] / 24),
-                                            _quantity: 1
+                                            _quantity: 1,
+                                            _meterName: it.MeterName
                                         };
                                         return acc;
                                     }, {}
                                 )
                             )
-                            .map(i => {                           
-                                i._mem = i._cpu * 5.5;     
+                            .map(i => {
+                                if (i?._meterName.indexOf('DTU') >= 0 ) {
+                                    i._cpu = Math.ceil(i._cpu / 100);
+                                }                 
+                                i._mem = i._cpu * 5.05;     
                                 i._calculatedQuantity = i._quantity;
                                 return i;
                             });
+                        ret.remarks = remarks;
                         return ret;
                     }
             }

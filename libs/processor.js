@@ -133,7 +133,7 @@ class Processor {
             }, {});
         });
 
-        otherServices = runStep(otherServices,  { type: 'groupby', field: 'ServiceId' });
+        otherServices = runStep(otherServices || [],  { type: 'groupby', field: 'ServiceId' });
 
         result.groups.otherServices = Object.entries(otherServices).map( ([serviceId, items]) => {
             return { serviceId, items };

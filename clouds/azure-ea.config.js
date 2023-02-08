@@ -302,6 +302,7 @@ const azureConfig = {
                 "type": "function", 
                 fn:
                     data => {
+                        const remarks = [];
                         const ret = Object
                             .entries(data)
                             .map(
@@ -319,10 +320,11 @@ const azureConfig = {
                                 )
                             )
                             .map(i => {                           
-                                i._mem = i._cpu * 5.5;     
+                                i._mem = i._cpu * 5.05;     
                                 i._calculatedQuantity = i._quantity;
                                 return i;
                             });
+                            ret.remarks = remarks;
                         return ret;
                     }
             }

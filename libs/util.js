@@ -7,7 +7,8 @@ function runStep(data, step) {
 
     if (step.type == 'groupby') {
         return data.reduce( (acc, it) => {
-            const key = it[step.field].toLowerCase();
+            const key = it[step.field]?.toLowerCase();
+            if (!key) return acc;
             if (!acc.hasOwnProperty(key)) acc[key] = [];
             acc[key].push(it);
             return acc;
