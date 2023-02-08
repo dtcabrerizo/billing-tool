@@ -184,7 +184,12 @@ const azureConfig = {
                         return Object.entries(data).map( ([_, items]) => {
                             const it = items[0];
                             const unit = Number(it.Unit.replace(/\D/g, ''));
-                            const qty = items.reduce( (acc,it) => acc += it.Quantity * 24 / unit, 0);
+                            let qty = items.reduce( (acc,it) => acc += it.Quantity * 24 / unit, 0);
+                            
+                            if (it.MeterSubCategory.indexOf('Elastic') >= 0) {
+                                qty = qty / 10;
+                            }
+                            
                             it._quantity = qty;
                             it.Quantity = qty;
                             return it;
