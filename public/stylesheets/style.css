@@ -10,3 +10,5 @@ th {
 .listTable th:not(:nth-child(2)) {
   width: calc(100% / 19);
 }
+
+.c-header * { height: 2em; }
