@@ -14,11 +14,12 @@
 </head>
 
 <body class="container mt-4">
-  <h1 class="d-flex align-items-baseline gap-4">
-    <% if (type=='AWS' ) { %> <img src="/images/aws.svg" height="50"> <% } %>
-    <% if (type=='Azure-CSP' ) { %> <img src="/images/azure-csp.svg" height="50"> <% } %>
-    <% if (type=='Azure-EA' ) { %> <img src="/images/azure-ea.svg" height="50"> <% } %>
-    Resultado
+  <h1 class="d-flex align-items-center gap-4 c-header">
+    <% if (type=='AWS' ) { %> <img src="/images/aws.svg"> <% } %>
+    <% if (type=='Azure-CSP' ) { %> <img src="/images/azure-csp.svg"> <% } %>
+    <% if (type=='Azure-EA' ) { %> <img src="/images/azure-ea.svg"> <% } %>
+    <% if (type=='AzureNew-EA' ) { %> <img src="/images/azure-new-ea.svg"> <% } %>
+    <div class="pt-4 pb-4">Resultado</div>
   </h1>
   <small>Arquivo: <%= fileName %></small>
 

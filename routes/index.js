@@ -6,8 +6,9 @@ const xlsx = require('xlsx');
 const AWS = require('../libs/AWS');
 const AzureEA = require('../libs/AZURE-EA');
 const AzureCSP = require('../libs/AZURE-CSP');
+const AzureNewEA = require('../libs/AZURE-NEW-EA');
 
-const Processors = [new AWS(), new AzureEA, new AzureCSP()];
+const Processors = [new AWS(), new AzureEA, new AzureCSP(), new AzureNewEA()];
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
