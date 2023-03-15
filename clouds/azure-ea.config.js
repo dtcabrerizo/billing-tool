@@ -182,27 +182,30 @@ const azureConfig = {
             "group": "database",
             "customMainFilter": { "field": "Meter Category", "operator": "sw", "value": "SQL Database" },
             "steps": [
-                { "type": "filter", "field": "Meter Name", "operator": "eq", "value": "vCore" }
-            ], "reference": 720, "increment": 5
-        }, {
-            "serviceId": "SQL Database (DTU)",
-            "group": "database",
-            "customMainFilter": { "field": "Meter Category", "operator": "sw", "value": "SQL Database" },
-            "steps": [ // Filtro para avisar que existe SQL com DTU no billing
-                { "type": "filter", "field": "Meter Name", "operator": "ct", "value": "DTU" },
-                { "type": "groupby", "field": "Instance ID" },
-                { "type": "function", "fn": 
-                    data => {
-                        return Object.entries(data).map( ([_, items]) => {
-                            const it = items[0];
-                            const unit = Number(it['Unit Of Measure'].replace(/\D/g, ''));
-                            const qty = items.reduce( (acc,it) => acc += it['Consumed Quantity'] * 24 / unit, 0);
-                            it._quantity = qty;
-                            it['Consumed Quantity'] = qty;
-                            return it;
-                        });
-                    }
+                {
+                    "type": "function", "fn":
+                        data => {
+                            return Object.entries(data).reduce((acc, [_, item]) => {
+
+                                let tmpItem = null;
+                                if (item['Meter Name'].indexOf('vCore') >= 0) {
+                                    tmpItem = { ...item };
+                                    tmpItem._quantity = item["Consumed Quantity"];
+                                } else if (item['Meter Name'].indexOf('DTU') >= 0) {
+                                    tmpItem = { ...item };
+                                    const unit = Number(item['Unit Of Measure'].replace(/\D/g, ''));
+                                    tmpItem._quantity = item["Consumed Quantity"] * 24 / unit;
+                                    if (item['Meter Sub-Category'].indexOf('Elastic') >= 0) {
+                                        tmpItem._quantity = tmpItem._quantity / 10;
+                                    }
+
+                                }
+                                if (tmpItem) acc.push(tmpItem);
+                                return acc;
+                            }, []);
+                        }
                 }
+
             ], "reference": 720, "increment": 5
         }, {
             "serviceId": "SQL Managed Instance",
@@ -252,6 +255,7 @@ const azureConfig = {
             "reference": 1024, "increment": 1
         },{
             "serviceId": "Application Service",
+            "customMainFilter": { "field": "Meter Sub-Category", "operator": "sw", "value": "Azure App Service" },
             "group": "serverless",
             "reference": 720, "increment": 30
         },

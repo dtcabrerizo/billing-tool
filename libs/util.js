@@ -2,7 +2,7 @@
 
 function runStep(data, step) {
     if (step.type == 'count') return data.length;
-    if (step.type == 'sum') return data.reduce( (acc,it) => acc + Number(it[step.field]) , 0);
+    if (step.type == 'sum') return data.reduce( (acc,it) =>  acc + (isNaN(it[step.field]) ? 0 : Number(it[step.field])) , 0);
     if (step.type == 'function') return step.fn.call(step, data);
 
     if (step.type == 'groupby') {

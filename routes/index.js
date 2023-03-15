@@ -7,8 +7,15 @@ const AWS = require('../libs/AWS');
 const AzureEA = require('../libs/AZURE-EA');
 const AzureCSP = require('../libs/AZURE-CSP');
 const AzureNewEA = require('../libs/AZURE-NEW-EA');
+const AzureCSPLight = require('../libs/AZURE-CSP-LIGHT');
 
-const Processors = [new AWS(), new AzureEA, new AzureCSP(), new AzureNewEA()];
+const Processors = [
+  new AWS(), 
+  new AzureEA, 
+  new AzureCSP(), 
+  new AzureNewEA(),
+  new AzureCSPLight()
+];
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -45,8 +52,13 @@ router.post('/', async function (req, res, next) {
     // Extrai dados da planilha
     const data = xlsx.utils.sheet_to_json(sheet, { raw: true, rawNumbers: true });
     
+    // Opções de execução
+    const options = {
+      isFebruary: req.body.chkfeb == 'on'
+    };
+
     // Executa processador de billing
-    const result = processor.run(data);
+    const result = processor.run(data, options);
 
     // Renderiza página de resultados
     return res.render('result', { ...result, type: processor.type, fileName: req.files.billing.name });

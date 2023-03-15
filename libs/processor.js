@@ -4,7 +4,7 @@ class Processor {
 
     config = {};
 
-    run(data) {
+    run(data, {isFebruary}) {
         console.log('Executando Step inicial...');
 
         data.forEach(d => {
@@ -30,26 +30,30 @@ class Processor {
             // console.log(`(${index + 1}/${this.config.services.length}) Executando Serviço: ${service.serviceId}...`);
 
             // Verifica se existe um filtro customizado além do ProductID
-            const options = service.customMainFilter ?
+            const serviceOptions = service.customMainFilter ?
                 { type: 'filter', ...service.customMainFilter } :
                 { type: 'filter', field: '_serviceId', value: service.serviceId, operator: 'eq' }
 
-            const serviceData = runStep(data, options);
+            const serviceData = runStep(data, serviceOptions);
 
             otherServices = otherServices.filter(it => !serviceData.some(svc => svc == it));
 
+            let remarks = [];
+            
             // Lista itens do billing através dos filtros
             const items = service.steps?.reduce((acc, step) => {
                 acc = runStep(acc, step);
                 return acc;
             }, serviceData) || serviceData;
 
+            if (items.remarks) remarks.push(...items.remarks);
 
             // Verifica se encontrou registros mas filtrou todos
-            let remarks = [];
             if (serviceData.length > 0 && items.length === 0) {
                 remarks.push(`Encontrados ${serviceData.length} registros, porém foram todos filtrados`);
             }
+
+
 
             // Cálcula total conforme configuração se houver uma configuração de total
             const total = service.total?.reduce((acc, step) => {
@@ -69,7 +73,13 @@ class Processor {
             // Cria objeto temporário de retorno
             const tmpService = { serviceId: service.serviceId, items: translatedItems, total, group: service.group, remarks };
             // Calcula a volumetria baseado na referência e incremento
-            tmpService.volumetria = Math.ceil(Math.floor(total / service.reference) / service.increment);
+            
+            // Adiciona tratamento para referências que tem valor 720 quando o mês é fevereiro
+            let reference = service.reference;
+            if (reference == 720 && isFebruary) {
+                reference = 670;
+            }
+            tmpService.volumetria = Math.ceil(Math.floor(total / reference) / service.increment);
             // Adiciona serviço na lista de retorno
             acc.push(tmpService);
 
@@ -96,7 +106,7 @@ class Processor {
             acc = runStep(acc, step);
             return acc;
         }, [...data]);
-
+        
         // Preenche as informações de CPU e Memória de cada banco de dados
         rds?.forEach(v => {
             if (v._type) {

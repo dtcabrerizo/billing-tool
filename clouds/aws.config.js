@@ -94,7 +94,12 @@ const awsConfig = {
                 { "type": "filter", "field": "UsageType", "operator": "ct", "value": "TimedStorage" }
             ], "reference": 5120, "increment": 2
         }, {
-            "serviceId": "AmazonVPC", "group": "network", "reference": 720, "increment": 20
+            "serviceId": "AmazonVPC", 
+            "group": "network", 
+            "steps": [
+                { "type": "filter", "field": "UsageType", "operator": "ct", "value": "Hour" }
+            ],
+            "reference": 720, "increment": 20
         }, {
             "serviceId": "AmazonCloudFront", "group": "network",
             "steps": [

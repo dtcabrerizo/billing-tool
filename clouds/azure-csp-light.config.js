@@ -2,11 +2,10 @@ const azureConfig = {
     "itemOutput": {
         "ServiceId": "MeterCategory",
         "Quantity": "Quantity",
-        "Description": "ProductName"
+        "Description": "Product"
     },
     "totalCost": [
-        { "type": "sum", "field": "PricingPreTaxTotal" },
-        { "type": "function", fn: value => value * 1.2}
+        { "type": "sum", "field": "Cost" }
     ],
         "services": [
         {
@@ -181,7 +180,7 @@ const azureConfig = {
                                     tmpItem._quantity = item["Quantity"];
                                 } else if (item['MeterName'].indexOf('DTU') >= 0) {
                                     tmpItem = { ...item };
-                                    const unit = Number(item['Unit'].replace(/\D/g, ''));
+                                    const unit = Number(item['UnitOfMeasure'].replace(/\D/g, ''));
                                     tmpItem._quantity = item["Quantity"] * 24 / unit;
                                     if (item['MeterSubCategory'].indexOf('Elastic') >= 0) {
                                         tmpItem._quantity = tmpItem._quantity / 10;
@@ -209,8 +208,8 @@ const azureConfig = {
                 { "type": "function", "fn": 
                     data => {
                         data.forEach(item => { 
-                            const qty = item['Consumed Quantity'] * 10000000;
-                            item['Consumed Quantity'] = qty;
+                            const qty = item['Quantity'] * 10000000;
+                            item['Quantity'] = qty;
                             item._quantity = qty;
                         });
                         return data;
@@ -261,7 +260,7 @@ const azureConfig = {
         "steps": [
             { "type": "filter", "field": "MeterCategory", "operator": "eq", "value": "Virtual Machines" },
             { "type": "filter", "field": "MeterSubCategory", "operator": "nct", "value": "Reservation" },
-            { "type": "groupby", "field": "ResourceURI" },
+            { "type": "groupby", "field": "ResourceId" },
             {
                 "type": "function", 
                 fn:
@@ -296,7 +295,7 @@ const azureConfig = {
             { "type": "filter", "field": "MeterCategory", "operator": "in", "value": ["SQL Database", "Azure Database for MySQL", "Azure Database for PostgreSQL"] },
             { "type": "filter", "field": "MeterSubCategory", "operator": "nct", "value": "License" },
             { "type": "filter", "field": "MeterSubCategory", "operator": "nct", "value": "Storage" },
-            { "type": "groupby", "field": "ResourceURI" },
+            { "type": "groupby", "field": "ResourceId" },
             {
                 "type": "function", 
                 fn:

@@ -182,27 +182,30 @@ const azureConfig = {
             "group": "database",
             "customMainFilter": { "field": "CategoriaDoMedidor (MeterCategory)", "operator": "sw", "value": "SQL Database" },
             "steps": [
-                { "type": "filter", "field": "NomeDoMedidor (MeterName)", "operator": "eq", "value": "vCore" }
-            ], "reference": 720, "increment": 5
-        }, {
-            "serviceId": "SQL Database (DTU)",
-            "group": "database",
-            "customMainFilter": { "field": "CategoriaDoMedidor (MeterCategory)", "operator": "sw", "value": "SQL Database" },
-            "steps": [ // Filtro para avisar que existe SQL com DTU no billing
-                { "type": "filter", "field": "NomeDoMedidor (MeterName)", "operator": "ct", "value": "DTU" },
-                { "type": "groupby", "field": "IdDoRecurso (ResourceId)" },
-                { "type": "function", "fn": 
-                    data => {
-                        return Object.entries(data).map( ([_, items]) => {
-                            const it = items[0];
-                            const unit = Number(it['UnidadeDeMedida (UnitOfMeasure)'].replace(/\D/g, ''));
-                            const qty = items.reduce( (acc,it) => acc += it['Quantidade (Quantity)'] * 24 / unit, 0);
-                            it._quantity = qty;
-                            it['Quantidade (Quantity)'] = qty;
-                            return it;
-                        });
-                    }
+                {
+                    "type": "function", "fn":
+                        data => {
+                            return Object.entries(data).reduce((acc, [_, item]) => {
+
+                                let tmpItem = null;
+                                if (item['NomeDoMedidor (MeterName)'].indexOf('vCore') >= 0) {
+                                    tmpItem = { ...item };
+                                    tmpItem._quantity = item["Quantidade (Quantity)"];
+                                } else if (item['NomeDoMedidor (MeterName)'].indexOf('DTU') >= 0) {
+                                    tmpItem = { ...item };
+                                    const unit = Number(item['UnidadeDeMedida (UnitOfMeasure)'].replace(/\D/g, ''));
+                                    tmpItem._quantity = item["Quantidade (Quantity)"] * 24 / unit;
+                                    if (item['SubcategoriaDoMedidor (MeterSubCategory)'].indexOf('Elastic') >= 0) {
+                                        tmpItem._quantity = tmpItem._quantity / 10;
+                                    }
+
+                                }
+                                if (tmpItem) acc.push(tmpItem);
+                                return acc;
+                            }, []);
+                        }
                 }
+
             ], "reference": 720, "increment": 5
         }, {
             "serviceId": "SQL Managed Instance",
@@ -216,15 +219,16 @@ const azureConfig = {
             "group": "serverless",
             "steps": [
                 { "type": "filter", "field": "NomeDoMedidor (MeterName)", "operator": "ew", "value": "Messaging Operations" },
-                { "type": "function", "fn": 
-                    data => {
-                        data.forEach(item => { 
-                            const qty = item['Quantidade (Quantity)'] * 10000000;
-                            item['Quantidade (Quantity)'] = qty;
-                            item._quantity = qty;
-                        });
-                        return data;
-                    }
+                {
+                    "type": "function", "fn":
+                        data => {
+                            data.forEach(item => {
+                                const qty = item['Quantidade (Quantity)'] * 10000000;
+                                item['Quantidade (Quantity)'] = qty;
+                                item._quantity = qty;
+                            });
+                            return data;
+                        }
                 }
             ], "reference": 30000000, "increment": 10
         }, {
@@ -250,9 +254,10 @@ const azureConfig = {
             "serviceId": "Static Web Apps",
             "group": "serverless",
             "reference": 1024, "increment": 1
-        },{
+        }, {
             "serviceId": "Application Service",
             "group": "serverless",
+            "customMainFilter": { "field": "SubcategoriaDoMedidor (MeterSubCategory)", "operator": "sw", "value": "Azure App Service" },
             "reference": 720, "increment": 30
         },
 
@@ -264,7 +269,7 @@ const azureConfig = {
             { "type": "filter", "field": "SubcategoriaDoMedidor (MeterSubCategory)", "operator": "nct", "value": "Reservation" },
             { "type": "groupby", "field": "IdDoRecurso (ResourceId)" },
             {
-                "type": "function", 
+                "type": "function",
                 fn:
                     data => {
                         const ret = Object
@@ -275,7 +280,7 @@ const azureConfig = {
                                         acc = {
                                             resourceId,
                                             count: info.length,
-                                            _description: it.Product,     
+                                            _description: it.Product,
                                             _type: it['NomeDoMedidor (MeterName)'].replace(/([^\/]+).*/, '$1'),
                                             _quantity: (acc._quantity || 0) + it._quantity
                                         };
@@ -283,7 +288,7 @@ const azureConfig = {
                                     }, {}
                                 )
                             )
-                            .map(i => {                                
+                            .map(i => {
                                 i._calculatedQuantity = i._quantity > 160 ? Math.ceil(i._quantity / 744) : 0;
                                 return i;
                             });
@@ -299,7 +304,7 @@ const azureConfig = {
             { "type": "filter", "field": "NomeDoMedidor (MeterName)", "operator": "eq", "value": "vCore" },
             { "type": "groupby", "field": "IdDoRecurso (ResourceId)" },
             {
-                "type": "function", 
+                "type": "function",
                 fn:
                     data => {
                         const remarks = [];
@@ -310,8 +315,8 @@ const azureConfig = {
                                     (acc, it) => {
                                         acc = {
                                             resourceId,
-                                            count: info.length,   
-                                            _description: it.Product,                                    
+                                            count: info.length,
+                                            _description: it.Product,
                                             _cpu: Math.max(acc._cpu || 0, it['Quantidade (Quantity)'] / 24),
                                             _quantity: 1
                                         };
@@ -319,12 +324,12 @@ const azureConfig = {
                                     }, {}
                                 )
                             )
-                            .map(i => {                           
-                                i._mem = i._cpu * 5.05;     
+                            .map(i => {
+                                i._mem = i._cpu * 5.05;
                                 i._calculatedQuantity = i._quantity;
                                 return i;
                             });
-                            ret.remarks = remarks;
+                        ret.remarks = remarks;
                         return ret;
                     }
             }

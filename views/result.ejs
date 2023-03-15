@@ -19,6 +19,7 @@
     <% if (type=='Azure-CSP' ) { %> <img src="/images/azure-csp.svg"> <% } %>
     <% if (type=='Azure-EA' ) { %> <img src="/images/azure-ea.svg"> <% } %>
     <% if (type=='AzureNew-EA' ) { %> <img src="/images/azure-new-ea.svg"> <% } %>
+    <% if (type=='Azure-CSP-Light' ) { %> <img src="/images/azure-csp-light.svg"> <% } %>
     <div class="pt-4 pb-4">Resultado</div>
   </h1>
   <small>Arquivo: <%= fileName %></small>
@@ -42,7 +43,8 @@
 
   <% 
   const createList=(title, name, list)=> { 
-     const listName=`${name}List`; const memSizes=[1.6, 4, 8, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208,  224, 240]; 
+     const listName=`${name}List`; 
+     const memSizes=[1.6, 4, 8, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208,  224, 240]; 
      const cpuSizes=[2, 4, 6, 8, 12, 16, 24, 32, 48, 64]; 
      const getSize=(l,n)=> {
       return l.filter(v => v >= n)[0] || l[l.length - 1];
@@ -137,7 +139,7 @@
                     const memSize = memSizes[memSizeIndex];
                     const qtd = mRes[cpuSize][memSize] || 0;
                     %>
-        <td class="text-center">
+        <td class="text-center <%= qtd == 0 ? 'text-muted' : '' %>">
           <% if (qtd) { %>
           <%= qtd %>
           <% } else { %>
@@ -250,7 +252,7 @@
 </script>
 
 <pre>
-  <%- //JSON.stringify(groups.otherServices, null, 4) %>
+  <%- JSON.stringify(rds.remarks, null, 4) %>
 </pre>
 
 </html>
