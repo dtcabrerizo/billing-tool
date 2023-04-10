@@ -92,7 +92,7 @@ const awsConfig = {
             "serviceId": "AmazonS3", "group": "compute",
             "steps": [
                 { "type": "filter", "field": "UsageType", "operator": "ct", "value": "TimedStorage" }
-            ], "reference": 5120, "increment": 2
+            ], "reference": 5120, "increment": 10
         }, {
             "serviceId": "AmazonVPC", 
             "group": "network", 
