@@ -9,7 +9,7 @@ const azureConfig = {
             type: 'function', fn: data => {
                 data.forEach(item => {
                     // Converte para dólar (revisar)
-                    item['ExtendedCost'] = item['ExtendedCost'] / 5.2;
+                    item['ExtendedCost'] = item['ExtendedCost'] / 5.3;
                 });
                 return data;
             }
