@@ -110,6 +110,7 @@ class Processor {
         // Preenche as informações de CPU e Memória de cada banco de dados
         rds?.forEach(v => {
             if (v._type) {
+                v.remarks = [];
                 const specs = this.config.RDSSpecs?.[v._type] || this.config.VMSpecs?.[v._type];
                 if (!specs) v.remarks.push(`Tipo de RDS não encontrado (${v._type})`)
                 v._cpu = specs?.vCPUs;

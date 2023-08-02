@@ -88,6 +88,7 @@ const azureConfig = {
             "reference": 5120, "increment": 2
         }, {// Revisar
             "serviceId": "File Sync",
+            "customMainFilter": { "field": "MeterSubCategory", "operator": "eq", "value": "File Sync" },
             "group": "compute",
             "reference": 2048, "increment": 10
         }, {
@@ -240,11 +241,7 @@ const azureConfig = {
             "steps": [
                 { "type": "filter", "field": "MeterName", "operator": "eq", "value": "Standard Capture" }
             ], "reference": 50, "increment": 2
-        }, { // REVISAR
-            "serviceId": "API Management",
-            "group": "serverless",
-            "reference": 720, "increment": 10
-        }, { // REVISAR
+        },  { // REVISAR
             "serviceId": "Static Web Apps",
             "group": "serverless",
             "reference": 1024, "increment": 1
