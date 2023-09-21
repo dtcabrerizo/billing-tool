@@ -72,7 +72,11 @@ const azureConfig = {
             "serviceId": "Azure Data Lake Storage",
             "group": "database",
             "steps": [
-                { "type": "filter", "field": "Meter Name", "operator": "ct", "value": "Data Stored" }
+                { "type": "filter", "field": "Meter Name", "operator": "ct", "value": "Data Stored" },
+                { "type": "function", "fn": data => {
+                    data.forEach(v => { v._quantity = v._quantity / 1024; return v;});
+                    return data;
+                }}
             ],
             "customMainFilter": { "field": "Meter Sub-Category", "operator": "sw", "value": "Azure Data Lake Storage" },
             "reference": 5, "increment": 2
@@ -95,7 +99,7 @@ const azureConfig = {
             "steps": [
                 { "type": "filter", "field": "Meter Name", "operator": "ct", "value": "Data Stored" }
             ],
-            "reference": 5120, "increment": 2
+            "reference": 5120, "increment": 10
         }, {
             "serviceId": "File Sync",
             "customMainFilter": { "field": "Meter Sub-Category", "operator": "eq", "value": "File Sync" },

@@ -13,14 +13,14 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
 </head>
 
-<body class="container mt-4">
+<body class="container my-4">
   <h1 class="d-flex align-items-center gap-4 c-header">
     <% if (type=='AWS' ) { %> <img src="/images/aws.svg"> <% } %>
     <% if (type=='Azure-CSP' ) { %> <img src="/images/azure-csp.svg"> <% } %>
     <% if (type=='Azure-EA' ) { %> <img src="/images/azure-ea.svg"> <% } %>
     <% if (type=='AzureNew-EA' ) { %> <img src="/images/azure-new-ea.svg"> <% } %>
     <% if (type=='Azure-CSP-Light' ) { %> <img src="/images/azure-csp-light.svg"> <% } %>
-    <div class="pt-4 pb-4">Resultado</div>
+    <div class="py-4">Resultado</div>
   </h1>
   <small>Arquivo: <%= fileName %></small>
 
@@ -52,7 +52,8 @@
 
     const mRes = list?.reduce(
       (acc, v) => {
-
+      
+      if (!v._cpu || !v._mem) return acc;      
       const cpuSize = getSize(cpuSizes, v._cpu);
       const memSize = getSize(memSizes, v._mem);
 
@@ -251,8 +252,10 @@
   const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 </script>
 
-<pre>
-  <%- //JSON.stringify(rds.remarks, null, 4) %>
-</pre>
+<!--
+<textarea>
+<%- JSON.stringify(locals, null, 4) %>
+</textarea>
+-->
 
 </html>

@@ -1,5 +1,15 @@
 const { runStep } = require("./util");
 
+const indiceComplexidade = {
+    'compute': 2,
+    'container': 2,
+    'database': 4,
+    'network': 4,
+    'security': 3,
+    'serverless': 4
+}
+
+
 class Processor {
 
     config = {};
@@ -127,9 +137,22 @@ class Processor {
 
         // Calcula complexidade e volumetria de cada grupo
         // Complexidade considera a soma da volumetria de todos os serviços divido por 4, ou 1 se for maior que 4
-        Object.values(result.groups).forEach(group => {
+        Object.entries(result.groups).forEach(([groupId, group]) => {
             const sumVolumetria = group.reduce((acc, svc) => acc += svc.volumetria > 0 ? 1 : 0, 0);
-            group.complexidade = sumVolumetria > 4 ? 1.0 : sumVolumetria / 4.0;
+                        
+            const idx = indiceComplexidade[groupId];
+            if (!idx) {
+                group.complexidade = sumVolumetria > 4 ? 1.0 : sumVolumetria / 4.0;
+                if (!group?.remarks) group.remarks = [];
+                group.remarks.push(`Não foi encontrado índice de complexidade para o grupo ${groupId}`);
+            } else {
+
+                group.complexidade = sumVolumetria > idx ? 
+                    1.0 : 
+                    // Arredonda o valor para 2 casas decimais
+                    Math.round( (sumVolumetria / idx + Number.EPSILON) * 100) / 100 ;                
+            }
+            
             group.volumetria = group.reduce((acc, it) => acc += (it.volumetria || 0), 0);
         });
 
