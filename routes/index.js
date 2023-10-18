@@ -8,13 +8,15 @@ const AzureEA = require('../libs/AZURE-EA');
 const AzureCSP = require('../libs/AZURE-CSP');
 const AzureNewEA = require('../libs/AZURE-NEW-EA');
 const AzureCSPLight = require('../libs/AZURE-CSP-LIGHT');
+const AzureCSPNovo = require('../libs/AZURE-CSP-NOVO');
 
 const Processors = [
   new AWS(), 
   new AzureEA, 
   new AzureCSP(), 
   new AzureNewEA(),
-  new AzureCSPLight()
+  new AzureCSPLight(),
+  new AzureCSPNovo
 ];
 
 /* GET home page. */
