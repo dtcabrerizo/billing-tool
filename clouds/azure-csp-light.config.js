@@ -293,7 +293,7 @@ const azureConfig = {
     },
     "rds": {
         "steps": [
-            { "type": "filter", "field": "MeterCategory", "operator": "in", "value": ["SQL Database", "Azure Database for MySQL", "Azure Database for PostgreSQL"] },
+            { "type": "filter", "field": "MeterCategory", "operator": "in", "value": ["SQL Database", "Azure Database for MySQL", "Azure Database for PostgreSQL", "SQL Managed Instance"] },
             { "type": "filter", "field": "MeterSubCategory", "operator": "nct", "value": "License" },
             { "type": "filter", "field": "MeterSubCategory", "operator": "nct", "value": "Storage" },
             { "type": "groupby", "field": "ResourceId" },

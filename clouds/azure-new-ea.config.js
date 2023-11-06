@@ -300,7 +300,7 @@ const azureConfig = {
     },
     "rds": {
         "steps": [
-            { "type": "filter", "field": "CategoriaDoMedidor (MeterCategory)", "operator": "in", "value": ["SQL Database", "Azure Database for MySQL", "Azure Database for PostgreSQL"] },
+            { "type": "filter", "field": "CategoriaDoMedidor (MeterCategory)", "operator": "in", "value": ["SQL Database", "Azure Database for MySQL", "Azure Database for PostgreSQL", "SQL Managed Instance"] },
             { "type": "filter", "field": "SubcategoriaDoMedidor (MeterSubCategory)", "operator": "nct", "value": "License" },
             { "type": "filter", "field": "NomeDoMedidor (MeterName)", "operator": "eq", "value": "vCore" },
             { "type": "groupby", "field": "IdDoRecurso (ResourceId)" },
@@ -317,7 +317,7 @@ const azureConfig = {
                                         acc = {
                                             resourceId,
                                             count: info.length,
-                                            _description: it.Product,
+                                            _description: it._description,
                                             _cpu: Math.max(acc._cpu || 0, it['Quantidade (Quantity)'] / 24),
                                             _quantity: 1
                                         };

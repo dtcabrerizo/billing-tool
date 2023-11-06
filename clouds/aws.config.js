@@ -33,7 +33,7 @@ const awsConfig = {
         }, {
             "serviceId": "AmazonEKS", "group": "container",
             "steps": [
-                { "type": "filter", "field": "UsageType", "operator": "ct", "value": "Hours" }
+                { "type": "filter", "field": "UsageType", "operator": "ct", "value": "vCPU-Hours" }
             ], "reference": 720, "increment": 1
         }, {
             "serviceId": "AmazonECR", "group": "container", "reference": 100, "increment": 10

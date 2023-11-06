@@ -20,7 +20,7 @@ class Processor {
         data.forEach(d => {
             d._quantity = d[this.config.itemOutput.Quantity];
             d._serviceId = d[this.config.itemOutput.ServiceId];
-            d._description = d[this.config.Description];
+            d._description = d[this.config.itemOutput.Description];
         })
 
         // Efetua operação inicial
