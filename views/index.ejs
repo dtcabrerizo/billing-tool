@@ -20,23 +20,26 @@
 
   <form method="POST" action="" enctype="multipart/form-data">
     <div class="container">
-
-      <div class="card">
+      <div class="card mt-3">
+        <div class="card-header">
+          <h3>Importar Billing</h3>
+          <div class="small text-end"><%= version %></div>
+        </div>
         <div class="card-body">
-          <h1>Importar Billing</h1>
+
 
           <div class="row mt-5">
-            <div class="col-auto">
+            <div class="col-lg-6">
               <input type="file" name="billing" id="billing">
             </div>
-            <div class="col-auto">
-              <input type="submit" value="Enviar">
-            </div>
-            <div class="col-auto">
+            <div class="col-lg-5">
               <input type="checkbox" name="chkfeb" id="chkfeb">
               <label for="chkfeb">
                 Considerar mês de Fevereiro
               </label>
+            </div>
+            <div class="col-lg-1">
+              <input type="submit" value="Enviar">
             </div>
           </div>
         </div>
@@ -118,9 +121,9 @@
     const tr = document.getElementById('trCommvault');
     const continuidade = document.querySelector('select[name=pilar_continuidade]');
     const commvault = document.querySelector('select[name=commvault]');
-    
+
     continuidade.addEventListener('change', e => {
-      if (e.target.value == 'ADVANCED') { 
+      if (e.target.value == 'ADVANCED') {
         tr.style.display = ''
         commvault.disabled = false;
       } else {

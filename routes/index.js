@@ -3,6 +3,8 @@ const express = require('express');
 const router = express.Router();
 const xlsx = require('xlsx');
 
+const package = require('../package.json');
+
 const AWS = require('../libs/AWS');
 const AzureEA = require('../libs/AZURE-EA');
 const AzureCSP = require('../libs/AZURE-CSP');
@@ -21,7 +23,7 @@ const Processors = [
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  res.render('index', { title: 'Express' });
+  res.render('index', { title: 'BillingTool', version: package.version });
 });
 
 router.post('/', async function (req, res, next) {
@@ -67,7 +69,7 @@ router.post('/', async function (req, res, next) {
     const result = processor.run(data, options);
 
     // Renderiza página de resultados
-    return res.render('result', { ...result, type: processor.type, fileName: req.files.billing.name, options });
+    return res.render('result', { ...result, type: processor.type, fileName: req.files.billing.name, options, version: package.version });
 
   } catch (error) {
     next(error);
