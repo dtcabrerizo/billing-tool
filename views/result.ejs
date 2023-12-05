@@ -30,6 +30,7 @@
       <tr>
         <th class="text-center">Volumetria</th>
         <th class="text-center">Complexidade</th>
+        <th class="text-center">Ferramentas</th>
         <th class="text-center">Custo de Nuvem</th>
       </tr>
     </thead>
@@ -37,6 +38,7 @@
       <tr>
         <td class="text-center"> <%= volumetria %> </td>
         <td class="text-center"> <%= complexidade %> </td>
+        <td class="text-center"> <%= Intl.NumberFormat('pt-br', {style: 'currency' , currency: 'USD' }).format(tools?.total) %> </td>
         <td class="text-center"> <%= Intl.NumberFormat('pt-br', {style: 'currency' , currency: 'USD' }).format(totalCost) %> </td>
       </tr>
     </tbody>
@@ -164,6 +166,46 @@
   <%- createList('Máquinas Virtuais', 'vm' , vm); %>
   <%- createList('Banco de dados', 'rds' , rds); %>
 
+  <h3>Pilares</h3>
+  <table class="table table-sm small table-striped-columns table-responsive table-hover">
+    <tr><th>Observabilidade / Operação</th><td><%= options.pilar_monitoracao %></td></tr>
+    <tr><th>Performance</th><td><%= options.pilar_performance %></td></tr>
+    <tr><th>Custos</th><td><%= options.pilar_custos %></td></tr>
+    <tr><th>Continuidade</th><td><%= options.pilar_continuidade %></td></tr>
+    <% if (options.commvault?.length > 0) { %>
+    <tr><td class="ps-5">Commvault</td><td><%= options.commvault %></td></tr>
+    <% } %>
+    <tr><th>Segurança</th><td><%= options.pilar_seguranca %></td></tr>
+  </table>
+  <div class="d-flex align-items-baseline gap-3">
+    <h3>Ferramentas</h3>
+    <small>(Sem Dynatrace)</small>
+  </div>
+  <table class="table table-sm small table-striped-columns table-responsive table-hover">
+    <thead>
+      <tr>
+        <th>Solução</th>
+        <th>Ferramenta</th>
+        <th>Custo</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% tools?.forEach(tool => { %>
+      <tr>
+        <td><%= tool.solution %></td>
+        <td><%= tool.name %></td>
+        <td><%= tool.value == 'N/A' ? 'N/A' : Intl.NumberFormat('pt-br', {style: 'currency' , currency: 'BRL' }).format(tool.value) %></td>
+      </tr>
+    <% }) %>  
+    </tbody>
+    <tfoot>
+      <tr>
+        <th colspan="2">Total</th>
+        <th class="user-select-all"><%= Intl.NumberFormat('pt-br', {style: 'currency' , currency: 'BRL' }).format(tools.total) %></th>
+      </tr>
+    </tfoot>
+  </table>
+
   <h3>Preço Serviços</h3>
   <div class="accordion" id="groups">
     <% 
@@ -192,7 +234,7 @@
           <% } %>
         </button>
       </h2>
-      <div id="group-<%= groupId %>" class="accordion-collapse collapse" aria-labelledby="header-group-<%= groupId %>" data-bs-parent="#groups">
+      <div id="group-<%= groupId %>" class="accordion-collapse collapse" aria-labelledby="header-group-<%= groupId %>">
         <div class="accordion-body">
           <div class="accordion" id="service-<%= groupId %>">
             <% group.forEach( (service)=> { %>
@@ -229,7 +271,13 @@
                     <tbody>
                       <% service?.items?.forEach( (item)=> { %>
                       <tr>
-                        <td><%= item?.Description %></td>
+                        <td>
+                          <% if (item.remarks?.length> 0) { %>
+                            <span class="badge text-black-50 me-3 bg-warning" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="<%= item.remarks.map(r => `<p>${r}</p>`).join('') %>"> !
+                            </span>
+                          <% } %>
+                          <%= item?.Description %>
+                        </td>
                         <td><%= item.Quantity %></td>
                       </tr>
                       <% }) %>
@@ -253,10 +301,9 @@
   const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 </script>
 
-<!--
-<textarea>
+<!-- <textarea>
 <%- JSON.stringify(locals, null, 4) %>
-</textarea>
--->
+</textarea> -->
+
 
 </html>

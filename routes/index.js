@@ -26,7 +26,6 @@ router.get('/', function (req, res, next) {
 
 router.post('/', async function (req, res, next) {
   try {
-
     if (!req.files?.billing) throw new Error('Nenhum arquivo enviado');
 
     console.log(`Recebido arquivo: ${req.files.billing.name} de ${req.client.remoteAddress}`);
@@ -60,14 +59,15 @@ router.post('/', async function (req, res, next) {
     
     // Opções de execução
     const options = {
-      isFebruary: req.body.chkfeb == 'on'
+      isFebruary: req.body.chkfeb == 'on',
+      ...req.body
     };
 
     // Executa processador de billing
     const result = processor.run(data, options);
 
     // Renderiza página de resultados
-    return res.render('result', { ...result, type: processor.type, fileName: req.files.billing.name });
+    return res.render('result', { ...result, type: processor.type, fileName: req.files.billing.name, options });
 
   } catch (error) {
     next(error);

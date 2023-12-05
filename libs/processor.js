@@ -1,4 +1,5 @@
-const { runStep } = require("./util");
+const { options } = require("../routes");
+const { runStep,aggregateTest } = require("./util");
 
 const indiceComplexidade = {
     'compute': 2,
@@ -12,9 +13,13 @@ const indiceComplexidade = {
 
 class Processor {
 
+
+
     config = {};
 
-    run(data, {isFebruary}) {
+    run(data, options) {
+        const toolsConfig = require('../tools');
+
         console.log('Executando Step inicial...');
 
         data.forEach(d => {
@@ -49,7 +54,7 @@ class Processor {
             otherServices = otherServices.filter(it => !serviceData.some(svc => svc == it));
 
             let remarks = [];
-            
+
             // Lista itens do billing através dos filtros
             const items = service.steps?.reduce((acc, step) => {
                 acc = runStep(acc, step);
@@ -61,9 +66,11 @@ class Processor {
             // Verifica se encontrou registros mas filtrou todos
             if (serviceData.length > 0 && items.length === 0) {
                 remarks.push(`Encontrados ${serviceData.length} registros, porém foram todos filtrados`);
+                items.push(...serviceData.map(it => {
+                    it._quantity = 0;
+                    return it;
+                }));
             }
-
-
 
             // Cálcula total conforme configuração se houver uma configuração de total
             const total = service.total?.reduce((acc, step) => {
@@ -83,10 +90,10 @@ class Processor {
             // Cria objeto temporário de retorno
             const tmpService = { serviceId: service.serviceId, items: translatedItems, total, group: service.group, remarks };
             // Calcula a volumetria baseado na referência e incremento
-            
+
             // Adiciona tratamento para referências que tem valor 720 quando o mês é fevereiro
             let reference = service.reference;
-            if (reference == 720 && isFebruary) {
+            if (reference == 720 && options.isFebruary) {
                 reference = 670;
             }
             tmpService.volumetria = Math.ceil(Math.floor(total / reference) / service.increment);
@@ -95,6 +102,7 @@ class Processor {
 
             return acc;
         }, []);
+
 
         // Lista as VMs contidas no billing, executando os steps de filtro
         const vm = this.config?.vm?.steps?.reduce((acc, step) => {
@@ -116,7 +124,7 @@ class Processor {
             acc = runStep(acc, step);
             return acc;
         }, [...data]);
-        
+
         // Preenche as informações de CPU e Memória de cada banco de dados
         rds?.forEach(v => {
             if (v._type) {
@@ -128,8 +136,38 @@ class Processor {
             }
         });
 
+
+        const tools = toolsConfig.tools.map(tool => {
+            const ret = Object.assign({}, tool);
+            
+            if (tool?.conditions?.length > 0) {
+                const validateTest = aggregateTest(options, tool.conditionsAggregator || 'or', tool.conditions);
+                
+                if (!validateTest) {
+                    ret.value = 'N/A';
+                    return ret;
+                }
+            } 
+
+
+            if (tool.steps) {
+                ret.base = { services, vm, rds };
+                tool.steps.forEach(step => {
+                    ret.base = runStep(ret.base, step);
+                });
+
+            } else {
+                ret.base = tool.cost;
+            }
+            ret.value = ret.base * (tool.isDolar ? toolsConfig.USD_Est : 1);
+            ret.value = ret.value / (1 - toolsConfig.tributos - toolsConfig.markup);
+            return ret;
+        });
+
+        tools.total = tools.reduce((acc, it) => acc += isNaN(it.value) ? 0 : it.value, 0);
+
         // Monta objeto de retorno
-        const result = { vm, rds };
+        const result = { vm, rds, tools };
 
         // Agrupa serviços nos grupos configurados
         result.groups = runStep(services, { type: 'groupby', field: 'group' });
@@ -139,7 +177,7 @@ class Processor {
         // Complexidade considera a soma da volumetria de todos os serviços divido por 4, ou 1 se for maior que 4
         Object.entries(result.groups).forEach(([groupId, group]) => {
             const sumVolumetria = group.reduce((acc, svc) => acc += svc.volumetria > 0 ? 1 : 0, 0);
-                        
+
             const idx = indiceComplexidade[groupId];
             if (!idx) {
                 group.complexidade = sumVolumetria > 4 ? 1.0 : sumVolumetria / 4.0;
@@ -147,17 +185,17 @@ class Processor {
                 group.remarks.push(`Não foi encontrado índice de complexidade para o grupo ${groupId}`);
             } else {
 
-                group.complexidade = sumVolumetria > idx ? 
-                    1.0 : 
+                group.complexidade = sumVolumetria > idx ?
+                    1.0 :
                     // Arredonda o valor para 2 casas decimais
-                    Math.round( (sumVolumetria / idx + Number.EPSILON) * 100) / 100 ;                
+                    Math.round((sumVolumetria / idx + Number.EPSILON) * 100) / 100;
             }
-            
+
             group.volumetria = group.reduce((acc, it) => acc += (it.volumetria || 0), 0);
         });
 
-        result.volumetria = Object.values(result.groups).reduce((acc,group)=> acc += group.volumetria, 0);
-        result.complexidade = Object.values(result.groups).reduce((acc,group)=> acc += group.complexidade, 0);
+        result.volumetria = Object.values(result.groups).reduce((acc, group) => acc += group.volumetria, 0);
+        result.complexidade = Object.values(result.groups).reduce((acc, group) => acc += group.complexidade, 0);
 
 
         otherServices = otherServices.map(it => {
@@ -167,9 +205,9 @@ class Processor {
             }, {});
         });
 
-        otherServices = runStep(otherServices || [],  { type: 'groupby', field: 'ServiceId' });
+        otherServices = runStep(otherServices || [], { type: 'groupby', field: 'ServiceId' });
 
-        result.groups.otherServices = Object.entries(otherServices).map( ([serviceId, items]) => {
+        result.groups.otherServices = Object.entries(otherServices).map(([serviceId, items]) => {
             return { serviceId, items };
         });
 

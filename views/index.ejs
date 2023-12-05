@@ -35,16 +35,101 @@
             <div class="col-auto">
               <input type="checkbox" name="chkfeb" id="chkfeb">
               <label for="chkfeb">
-                 Considerar mês de Fevereiro
+                Considerar mês de Fevereiro
               </label>
             </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="card mt-4">
+        <div class="card-header">
+          <h3>Informações de faturamento</h3>
+        </div>
+        <div class="card-body">
+          Pilares
+          <table class="table table-sm table-hover">
+            <tr>
+              <th>Observabilidade / Operação</th>
+              <td>
+                <select class="form-select form-select-sm" aria-label="Observabilidade / Operação"
+                  name="pilar_monitoracao">
+                  <option value="BASIC">BASIC</option>
+                  <option calue="PREMIUM" selected>PREMIUM</option>
+                  <option value="ADVANCED">ADVANCED</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <th>Performance</th>
+              <td>
+                <select class="form-select form-select-sm" aria-label="Performance" name="pilar_performance">
+                  <option value="BASIC">BASIC</option>
+                  <option calue="PREMIUM" selected>PREMIUM</option>
+                  <option value="ADVANCED">ADVANCED</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <th>Custos</th>
+              <td>
+                <select class="form-select form-select-sm" aria-label="Custos" name="pilar_custos">
+                  <option value="BASIC">BASIC</option>
+                  <option calue="PREMIUM" selected>PREMIUM</option>
+                  <option value="ADVANCED">ADVANCED</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <th>Continuidade</th>
+              <td>
+                <select class="form-select form-select-sm" aria-label="Continuidade" name="pilar_continuidade">
+                  <option value="BASIC">BASIC</option>
+                  <option calue="PREMIUM" selected>PREMIUM</option>
+                  <option value="ADVANCED">ADVANCED</option>
+                </select>
+              </td>
+            </tr>
+            <tr id="trCommvault" style="display: none;">
+              <td class="ps-5">Commvault</td>
+              <td>
+                <select class="form-select form-select-sm" aria-label="Commvault" name="commvault">
+                  <option value="SIM">SIM</option>
+                  <option calue="NAO" selected>NÃO</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <th>Segurança</th>
+              <td>
+                <select class="form-select form-select-sm" aria-label="Segurança" name="pilar_seguranca">
+                  <option value="BASIC">BASIC</option>
+                  <option calue="PREMIUM" selected>PREMIUM</option>
+                  <option value="ADVANCED">ADVANCED</option>
+                </select>
+              </td>
+            </tr>
+          </table>
         </div>
       </div>
-
-    </div>
   </form>
 
-
+  <script defer>
+    const tr = document.getElementById('trCommvault');
+    const continuidade = document.querySelector('select[name=pilar_continuidade]');
+    const commvault = document.querySelector('select[name=commvault]');
+    
+    continuidade.addEventListener('change', e => {
+      if (e.target.value == 'ADVANCED') { 
+        tr.style.display = ''
+        commvault.disabled = false;
+      } else {
+        tr.style.display = 'none'
+        commvault.value = '';
+        commvault.disabled = true;
+      }
+    });
+  </script>
 </body>
 
 </html>

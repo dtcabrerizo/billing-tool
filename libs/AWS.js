@@ -25,7 +25,7 @@ class AWS extends Processor {
                 mem: Number(v['Memory'].toString().replace(/[^\d\.]/g, '')),
             };
             return acc;
-        })
+        }, {})
     }
 
     
