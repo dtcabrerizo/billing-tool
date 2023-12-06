@@ -2,7 +2,9 @@
 <html>
 
 <head>
-  <title>Billing Tool</title>
+  <title>
+    <%= title %>
+  </title>
   <meta charset="UTF-8" />
   <meta http-equiv="content-language" content="pt_BR">
   <link rel='stylesheet' href='/stylesheets/style.css' />
@@ -38,7 +40,7 @@
       <tr>
         <td class="text-center"> <%= volumetria %> </td>
         <td class="text-center"> <%= complexidade %> </td>
-        <td class="text-center"> <%= Intl.NumberFormat('pt-br', {style: 'currency' , currency: 'USD' }).format(tools?.total) %> </td>
+        <td class="text-center"> <%= Intl.NumberFormat('pt-br', {style: 'currency' , currency: 'BRL' }).format(tools?.total) %> </td>
         <td class="text-center"> <%= Intl.NumberFormat('pt-br', {style: 'currency' , currency: 'USD' }).format(totalCost) %> </td>
       </tr>
     </tbody>
@@ -167,7 +169,7 @@
   <%- createList('Banco de dados', 'rds' , rds); %>
 
   <h3>Pilares</h3>
-  <table class="table table-sm small table-striped-columns table-responsive table-hover">
+  <table class="table table-sm small table-responsive table-hover">
     <tr><th>Observabilidade / Operação</th><td><%= options.pilar_monitoracao %></td></tr>
     <tr><th>Performance</th><td><%= options.pilar_performance %></td></tr>
     <tr><th>Custos</th><td><%= options.pilar_custos %></td></tr>
@@ -177,11 +179,8 @@
     <% } %>
     <tr><th>Segurança</th><td><%= options.pilar_seguranca %></td></tr>
   </table>
-  <div class="d-flex align-items-baseline gap-3">
     <h3>Ferramentas</h3>
-    <small>(Sem Dynatrace)</small>
-  </div>
-  <table class="table table-sm small table-striped-columns table-responsive table-hover">
+  <table class="table table-sm small table-responsive table-hover">
     <thead>
       <tr>
         <th>Solução</th>
@@ -299,6 +298,18 @@
 <script>
   const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
   const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+  let countClick = 0, img = document.querySelector('.c-header > img'), oldsrc = img.src, newsrc = '/favicon.ico';
+  img.addEventListener('click', e => { 
+    if (e.shiftKey) {
+      if (++countClick > 3) {
+        countClick = 0;
+        img.src = img.src.endsWith(newsrc) ? oldsrc : newsrc;
+      }
+    }
+  });
+  
+
 </script>
 
 <!-- <textarea>

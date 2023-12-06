@@ -137,33 +137,50 @@ class Processor {
         });
 
 
+        // Calcula custo de ferramentas
         const tools = toolsConfig.tools.map(tool => {
+            // copia objeto da ferramenta atual pzra objeto de retorno
             const ret = Object.assign({}, tool);
             
+            // Se a ferramenta tem uma condição, executa a condição
             if (tool?.conditions?.length > 0) {
+                // Validação da condição
                 const validateTest = aggregateTest(options, tool.conditionsAggregator || 'or', tool.conditions);
                 
+                // Se a condição falhou, retorna 0
                 if (!validateTest) {
                     ret.value = 'N/A';
                     return ret;
                 }
             } 
 
-
+            // Verifica se a ferramenta tem passos para cálculo ou é fixo 
             if (tool.steps) {
-                ret.base = { services, vm, rds };
+                // Monta objeto inicial dos passos de execução
+                ret.base = { services, vm, rds, options };
+                // Executa cada passo, retro alimentando a resposta do passo anterior
                 tool.steps.forEach(step => {
                     ret.base = runStep(ret.base, step);
                 });
 
             } else {
+                // Adiciona custo fixo
                 ret.base = tool.cost;
             }
+
+            // Aplica taxa de dólar se tiver configurado 
             ret.value = ret.base * (tool.isDolar ? toolsConfig.USD_Est : 1);
+            // Aplica tibutos e markup
             ret.value = ret.value / (1 - toolsConfig.tributos - toolsConfig.markup);
+            
+            // Se a ferramenta tem um nome customizado, altera o nome atual
+            if (ret.customName) ret.name = ret.customName({ options });
+
+            // Retorna objeto com o custo da ferramenta
             return ret;
         });
 
+        // Calcula valor total da ferramenta, acumulando os valores calculados
         tools.total = tools.reduce((acc, it) => acc += isNaN(it.value) ? 0 : it.value, 0);
 
         // Monta objeto de retorno

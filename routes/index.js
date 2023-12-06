@@ -23,7 +23,7 @@ const Processors = [
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  res.render('index', { title: 'BillingTool', version: package.version });
+  res.render('index', { title: '"Bee"lling Tool', version: package.version });
 });
 
 router.post('/', async function (req, res, next) {
@@ -69,7 +69,7 @@ router.post('/', async function (req, res, next) {
     const result = processor.run(data, options);
 
     // Renderiza página de resultados
-    return res.render('result', { ...result, type: processor.type, fileName: req.files.billing.name, options, version: package.version });
+    return res.render('result', { title: '"Bee"lling Tool', ...result, type: processor.type, fileName: req.files.billing.name, options, version: package.version });
 
   } catch (error) {
     next(error);

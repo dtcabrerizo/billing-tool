@@ -4,6 +4,30 @@ const toolsConfig = {
     "markup": 0.1,
     "tools": [
         {
+            "solution": "Monitoramento",
+            "name": "Dynatrace - Host Units",
+            "customName": data => `Dynatrace - Host Units (${Number(data.options.dyna_hu)})`,
+            "isDolar": false,
+            "steps": [
+                { "type": "function", "fn": (data) => { return isNaN(data.options.dyna_hu) ? 'N/A' : Number(data.options.dyna_hu) * 310; } },
+            ]
+        }, {
+            "solution": "Monitoramento",
+            "name": "Dynatrace - DDUs",
+            "customName": data => `Dynatrace - DDUs (${Number(data.options.dyna_ddu)})`,
+            "isDolar": false,
+            "steps": [
+                { "type": "function", "fn": (data) => { return isNaN(data.options.dyna_ddu) ? 'N/A' : Number(data.options.dyna_ddu) / 1000000 * 994.26; } },
+            ]
+        }, {
+            "solution": "Monitoramento",
+            "name": "Dynatrace - DEM Unit",
+            "customName": data => `Dynatrace - DEM Unit (${Number(data.options.dyna_dem)})`,
+            "isDolar": false,
+            "steps": [
+                { "type": "function", "fn": (data) => { return isNaN(data.options.dyna_dem) ? 'N/A' : Number(data.options.dyna_dem) / 1000000  * 3250.75; } },
+            ]
+        }, {
             "solution": "Gestão de Chamados",
             "name": "Service Now",
             "cost": (535477.29 / 12) / 300,
@@ -42,7 +66,7 @@ const toolsConfig = {
                     "field": "pilar_monitoracao",
                     "operator": "neq",
                     "value": "BASIC"
-                },{
+                }, {
                     "field": "pilar_continuidade",
                     "operator": "neq",
                     "value": "BASIC"
@@ -109,7 +133,7 @@ const toolsConfig = {
                     "field": "pilar_continuidade",
                     "operator": "eq",
                     "value": "ADVANCED"
-                },{
+                }, {
                     "field": "commvault",
                     "operator": "eq",
                     "value": "SIM"
@@ -130,12 +154,12 @@ const toolsConfig = {
                     "field": "pilar_continuidade",
                     "operator": "eq",
                     "value": "ADVANCED"
-                },{
+                }, {
                     "field": "commvault",
                     "operator": "eq",
                     "value": "SIM"
                 }
-            ]            
+            ]
         }
     ]
 };

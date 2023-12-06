@@ -23,7 +23,9 @@
       <div class="card mt-3">
         <div class="card-header">
           <h3>Importar Billing</h3>
-          <div class="small text-end"><%= version %></div>
+          <div class="small text-end">
+            <%= version %>
+          </div>
         </div>
         <div class="card-body">
 
@@ -43,77 +45,104 @@
             </div>
           </div>
         </div>
-
       </div>
+
+
       <div class="card mt-4">
         <div class="card-header">
           <h3>Informações de faturamento</h3>
         </div>
         <div class="card-body">
-          Pilares
-          <table class="table table-sm table-hover">
-            <tr>
-              <th>Observabilidade / Operação</th>
-              <td>
-                <select class="form-select form-select-sm" aria-label="Observabilidade / Operação"
-                  name="pilar_monitoracao">
-                  <option value="BASIC">BASIC</option>
-                  <option calue="PREMIUM" selected>PREMIUM</option>
-                  <option value="ADVANCED">ADVANCED</option>
-                </select>
-              </td>
-            </tr>
-            <tr>
-              <th>Performance</th>
-              <td>
-                <select class="form-select form-select-sm" aria-label="Performance" name="pilar_performance">
-                  <option value="BASIC">BASIC</option>
-                  <option calue="PREMIUM" selected>PREMIUM</option>
-                  <option value="ADVANCED">ADVANCED</option>
-                </select>
-              </td>
-            </tr>
-            <tr>
-              <th>Custos</th>
-              <td>
-                <select class="form-select form-select-sm" aria-label="Custos" name="pilar_custos">
-                  <option value="BASIC">BASIC</option>
-                  <option calue="PREMIUM" selected>PREMIUM</option>
-                  <option value="ADVANCED">ADVANCED</option>
-                </select>
-              </td>
-            </tr>
-            <tr>
-              <th>Continuidade</th>
-              <td>
-                <select class="form-select form-select-sm" aria-label="Continuidade" name="pilar_continuidade">
-                  <option value="BASIC">BASIC</option>
-                  <option calue="PREMIUM" selected>PREMIUM</option>
-                  <option value="ADVANCED">ADVANCED</option>
-                </select>
-              </td>
-            </tr>
-            <tr id="trCommvault" style="display: none;">
-              <td class="ps-5">Commvault</td>
-              <td>
-                <select class="form-select form-select-sm" aria-label="Commvault" name="commvault">
-                  <option value="SIM">SIM</option>
-                  <option calue="NAO" selected>NÃO</option>
-                </select>
-              </td>
-            </tr>
-            <tr>
-              <th>Segurança</th>
-              <td>
-                <select class="form-select form-select-sm" aria-label="Segurança" name="pilar_seguranca">
-                  <option value="BASIC">BASIC</option>
-                  <option calue="PREMIUM" selected>PREMIUM</option>
-                  <option value="ADVANCED">ADVANCED</option>
-                </select>
-              </td>
-            </tr>
-          </table>
+
+          <div class="row">
+            <div class="col-md-3">
+              <h4>Dynatrace</h4>
+              <table class="table table-sm table-hover">
+                <tr>
+                  <th>HU</th>
+                  <td><input type="number" class="form-control form-control-sm" name="dyna_hu" /></td>
+                </tr>
+                <tr>
+                  <th>DDU</th>
+                  <td><input type="number" class="form-control form-control-sm" name="dyna_ddu" /></td>
+                </tr>
+                <tr>
+                  <th>DEM</th>
+                  <td><input type="number" class="form-control form-control-sm" name="dyna_dem" /></td>
+                </tr>
+              </table>
+
+            </div>
+            <div class="col-md-9 border-start">
+              <h4>Pilares</h4>
+              <table class="table table-sm table-hover">
+                <tr>
+                  <th>Observabilidade / Operação</th>
+                  <td>
+                    <select class="form-select form-select-sm" aria-label="Observabilidade / Operação"
+                      name="pilar_monitoracao">
+                      <option value="BASIC">BASIC</option>
+                      <option calue="PREMIUM" selected>PREMIUM</option>
+                      <option value="ADVANCED">ADVANCED</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Performance</th>
+                  <td>
+                    <select class="form-select form-select-sm" aria-label="Performance" name="pilar_performance">
+                      <option value="BASIC">BASIC</option>
+                      <option calue="PREMIUM" selected>PREMIUM</option>
+                      <option value="ADVANCED">ADVANCED</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Custos</th>
+                  <td>
+                    <select class="form-select form-select-sm" aria-label="Custos" name="pilar_custos">
+                      <option value="BASIC">BASIC</option>
+                      <option calue="PREMIUM" selected>PREMIUM</option>
+                      <option value="ADVANCED">ADVANCED</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Continuidade</th>
+                  <td>
+                    <select class="form-select form-select-sm" aria-label="Continuidade" name="pilar_continuidade">
+                      <option value="BASIC">BASIC</option>
+                      <option calue="PREMIUM" selected>PREMIUM</option>
+                      <option value="ADVANCED">ADVANCED</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr id="trCommvault" style="display: none;">
+                  <td class="ps-5">Commvault</td>
+                  <td>
+                    <select class="form-select form-select-sm" aria-label="Commvault" name="commvault">
+                      <option value="SIM">SIM</option>
+                      <option calue="NAO" selected>NÃO</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Segurança</th>
+                  <td>
+                    <select class="form-select form-select-sm" aria-label="Segurança" name="pilar_seguranca">
+                      <option value="BASIC">BASIC</option>
+                      <option calue="PREMIUM" selected>PREMIUM</option>
+                      <option value="ADVANCED">ADVANCED</option>
+                    </select>
+                  </td>
+                </tr>
+              </table>
+            </div>
+
+          </div>
+
         </div>
+
       </div>
   </form>
 
