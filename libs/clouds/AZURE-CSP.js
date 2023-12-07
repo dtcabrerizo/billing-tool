@@ -1,6 +1,6 @@
-const azureConfig = require('../clouds/azure-csp.config');
-const Processor = require('./processor');
-const VMs = require('../assets/AZURE-VMS.json');
+const azureConfig = require('../../clouds/azure-csp.config');
+const Processor = require('../processor');
+const VMs = require('../../assets/AZURE-VMS.json');
 
 
 class AzureCSP extends Processor {

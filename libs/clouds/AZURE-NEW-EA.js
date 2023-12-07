@@ -1,11 +1,11 @@
-const azureConfig = require('../clouds/azure-csp-novo.config');
-const Processor = require('./processor');
-const VMs = require('../assets/AZURE-VMS.json');
+const azureConfig = require('../../clouds/azure-new-ea.config');
+const Processor = require('../processor');
+const VMs = require('../../assets/AZURE-VMS.json');
 
 
-class AzureCSPNovo extends Processor {
-    type = 'Azure-CSP-Novo';
-    A1Cell = 'invoiceId';
+class AzureNewEA extends Processor {
+    type = 'AzureNew-EA';
+    A1Cell = 'IdDaContaDeCobrança (BillingAccountId)';
 
     constructor() {
         super();
@@ -26,4 +26,4 @@ class AzureCSPNovo extends Processor {
 
 }
 
-module.exports = AzureCSPNovo;
+module.exports = AzureNewEA;

@@ -12,9 +12,7 @@ const indiceComplexidade = {
 
 
 class Processor {
-
-
-
+ 
     config = {};
 
     run(data, options) {

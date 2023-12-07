@@ -57,7 +57,7 @@ const toolsConfig = {
             "isDolar": false,
             "steps": [
                 { "type": "function", "fn": (data) => { return data.services; } },
-                { "type": "filter", "field": "serviceId", "operator": "in", "value": ["AmazonEC2","Virtual Machines"] },
+                { "type": "filter", "field": "serviceId", "operator": "in", "value": ["AmazonEC2", "Virtual Machines"] },
                 { "type": "sum", "field": "total" },
                 { "type": "function", "fn": (data) => { return data * 0.0106; } }
             ],
@@ -175,7 +175,17 @@ const toolsConfig = {
             ],
             "steps": [
                 // Reaplicar Dolar
-                { "type": "function", "fn": (data) => { return data.totalCost * Dollar.value * (data.processor.type == 'AWS' ? 0.06 : 0.01); } },
+                {
+                    "type": "function", "fn": (data) => {
+                        if (data.processor.type == 'AWS') {
+                            return data.totalCost * Dollar.value * 0.06;
+                        } else if (data.processor.type == 'AZURE') {
+                            return data.totalCost * Dollar.value * 0.01;
+                        } else {
+                            return 0;
+                        }
+                    }
+                },
             ]
         }
     ]

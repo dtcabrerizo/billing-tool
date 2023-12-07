@@ -32,7 +32,26 @@
 
           <div class="row mt-5">
             <div class="col-lg-6">
-              <input type="file" name="billing" id="billing">
+
+              <select class="form-select form-select-sm mb-3" name="billing_type">
+                <option value="AWS+AZURE" selected>AWS e Azure</option>
+                <option value="OCI">OCI</option>
+              </select>
+
+              <div class="input-group mb-3">
+                <label for="billing" class="input-group-text">Billing</label>
+                <input type="file" class="form-control" name="billing" id="billing">
+              </div>
+              <div class="input-group mb-3" style="display: none;">
+                <label for="oci_usage" class="input-group-text">Uso</label>
+                <input type="file" class="form-control" name="oci_usage" id="oci_usage">
+              </div>
+              <div class="input-group mb-3" style="display: none;">
+                <label for="oci_cost" class="input-group-text">Custo</label>
+                <input type="file" class="form-control" name="oci_cost" id="oci_cost">
+              </div>
+
+
             </div>
             <div class="col-lg-5">
               <input type="checkbox" name="chkfeb" id="chkfeb">
@@ -41,7 +60,7 @@
               </label>
             </div>
             <div class="col-lg-1">
-              <input type="submit" value="Enviar">
+              <input type="submit" class="btn btn-primary" value="Enviar">
             </div>
           </div>
         </div>
@@ -152,6 +171,28 @@
   </form>
 
   <script defer>
+    const billingType = document.querySelector('select[name=billing_type]');
+    const billingFile = document.querySelector('input[name=billing]');
+    const billingOCIUsage = document.querySelector('input[name=oci_usage]');
+    const billingOCICost = document.querySelector('input[name=oci_cost]');
+
+    billingType.addEventListener('change', e => {
+      if (billingType.value == 'AWS+AZURE') {
+        billingFile.parentElement.style.display = 'flex';
+        billingOCIUsage.parentElement.style.display = 'none';
+        billingOCICost.parentElement.style.display = 'none';
+        billingOCIUsage.value = null;
+        billingOCICost.value = null;
+
+      } else {
+        billingFile.parentElement.style.display = 'none';
+        billingOCIUsage.parentElement.style.display = 'flex';
+        billingOCICost.parentElement.style.display = 'flex';
+        billingFile.value = null;
+      }
+    });
+
+
     const tr = document.getElementById('trCommvault');
     const continuidade = document.querySelector('select[name=pilar_continuidade]');
     const commvault = document.querySelector('select[name=commvault]');
