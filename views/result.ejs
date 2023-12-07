@@ -23,6 +23,7 @@
     <% if (type=='AzureNew-EA' ) { %> <img src="/images/azure-new-ea.svg"> <% } %>
     <% if (type=='Azure-CSP-Light' ) { %> <img src="/images/azure-csp-light.svg"> <% } %>
     <% if (type=='Azure-CSP-Novo' ) { %> <img src="/images/azure-csp-novo.svg"> <% } %>
+    <% if (type=='OCI' ) { %> <img src="/images/oracle.svg"> <% } %>
     <div class="py-4">Resultado</div>
   </h1>
   <small>Arquivos: <%= Object.values(files).map(i => i.name).join(', ') %> | Dólar: <%= Intl.NumberFormat('pt-br', {style: 'currency' , currency: 'BRL' }).format(Dollar.value) %> (<%= Dollar.date %>)</small>

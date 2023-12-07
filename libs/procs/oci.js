@@ -44,7 +44,7 @@ const getData = (file) => {
 }
 
 
-const processor = {};
+const processor = { type: 'OCI' };
 processor.run = ({ usageData, costData }, options) => {
 
     const data = Object.entries(usageData).map(([key, value]) => ({ ServiceId: key, Quantity: value, Description: key }));
