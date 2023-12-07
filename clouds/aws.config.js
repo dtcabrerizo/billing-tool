@@ -6,10 +6,13 @@ const awsConfig = {
     },
     "steps": [
         { "type": "filter", "field": "LinkedAccountName", "operator": "neq", "value": null },
+        { "type": "filter", "field": "LinkedAccountName", "operator": "neq", "value": "" },
         { "type": "filter", "field": "ProductCode", "operator": "neq", "value": null }
     ],
     "totalCost": [
         { "type": "filter", "field": "LinkedAccountName", "operator": "neq", "value": null },
+        { "type": "filter", "field": "LinkedAccountName", "operator": "neq", "value": "" },
+        { "type": "filter", "field": "ProductCode", "operator": "neq", "value": null },
         { "type": "sum", "field": "TotalCost" }
     ],
     "services": [

@@ -13,7 +13,7 @@ function runStep(data, step) {
 
     if (step.type == 'groupby') {
         return data.reduce((acc, it) => {
-            const key = it[step.field]?.toLowerCase();
+            const key = it[step.field]?.toString()?.toLowerCase();
             if (!key) return acc;
             if (!acc.hasOwnProperty(key)) acc[key] = [];
             acc[key].push(it);
@@ -26,15 +26,16 @@ function runStep(data, step) {
 }
 
 function runTest(obj, { field, operator, value }) {
+    if (!obj) return false;
     if (operator == 'in') return value.indexOf(obj[field]) >= 0;
     if (operator == 'eq') return obj[field] == value;
     if (operator == 'neq') return obj[field] != value;
-    if (operator == 'ct') return obj[field]?.toLowerCase().indexOf(value?.toLowerCase()) >= 0;
-    if (operator == 'nct') return obj[field]?.toLowerCase().indexOf(value?.toLowerCase()) < 0;
-    if (operator == 'sw') return obj[field]?.toLowerCase().startsWith(value?.toLowerCase());
-    if (operator == 'nsw') return obj[field]?.toLowerCase().startsWith(value?.toLowerCase());
-    if (operator == 'ew') return obj[field]?.toLowerCase().endsWith(value?.toLowerCase());
-    if (operator == 'new') return obj[field]?.toLowerCase().endsWith(value?.toLowerCase());
+    if (operator == 'ct') return obj[field]?.toString().toLowerCase().indexOf(value?.toString().toLowerCase()) >= 0;
+    if (operator == 'nct') return obj[field]?.toString().toLowerCase().indexOf(value?.toString().toLowerCase()) < 0;
+    if (operator == 'sw') return obj[field]?.toString().toLowerCase().startsWith(value?.toString().toLowerCase());
+    if (operator == 'nsw') return obj[field]?.toString().toLowerCase().startsWith(value?.toString().toLowerCase());
+    if (operator == 'ew') return obj[field]?.toString().toLowerCase().endsWith(value?.toString().toLowerCase());
+    if (operator == 'new') return obj[field]?.toString().toLowerCase().endsWith(value?.toString().toLowerCase());
     return false;
 }
 

@@ -5,7 +5,7 @@ const azureConfig = {
         "Description": "ProductName"
     },
     "totalCost": [
-        { "type": "sum", "field": "Cost" }
+        { "type": "sum", "field": "costInUsd" }
     ],
         "services": [
         {

@@ -1,22 +1,14 @@
+const Dollar = require("../libs/dollar");
+
 const azureConfig = {
     "itemOutput": {
         "ServiceId": "CategoriaDoMedidor (MeterCategory)",
         "Quantity": "Quantidade (Quantity)",
         "Description": "Produto (Product)"
     },
-    "steps": [
-        {
-            type: 'function', fn: data => {
-                data.forEach(item => {
-                    // Converte para dólar (revisar)
-                    item['Custo (Cost)'] = item['Custo (Cost)'] / 5.2;
-                });
-                return data;
-            }
-        }
-    ],
     "totalCost": [
-        { "type": "sum", "field": "Custo (Cost)" }
+        { "type": "sum", "field": "Custo (Cost)" },
+        { "type": 'function', "fn": data => data / Dollar.value }
     ],
     "services": [
         {

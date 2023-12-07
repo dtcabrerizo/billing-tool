@@ -4,19 +4,9 @@ const azureConfig = {
         "Quantity": "Consumed Quantity",
         "Description": "Product"
     },
-    "steps": [
-        {
-            type: 'function', fn: data => {
-                data.forEach(item => {
-                    // Converte para dólar (revisar)
-                    item['ExtendedCost'] = item['ExtendedCost'] / 5.3;
-                });
-                return data;
-            }
-        }
-    ],
     "totalCost": [
-        { "type": "sum", "field": "ExtendedCost" }
+        { "type": "sum", "field": "Custo (Cost)" },
+        { "type": 'function', "fn": data => data / 5.2 }
     ],
     "services": [
         {

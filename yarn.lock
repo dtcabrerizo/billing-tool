@@ -220,6 +220,11 @@ crc-32@~1.2.0, crc-32@~1.2.1:
   resolved "https://registry.npmjs.org/crc-32/-/crc-32-1.2.2.tgz"
   integrity sha512-ROmzCKrTnOwybPcJApAA6WBWij23HVfGVNKqqrZpuyZOHqK2CwHSvpGuyt/UNNvaIjEd8X5IFGp4Mh+Ie1IHJQ==
 
+csv-parse@^5.5.2:
+  version "5.5.2"
+  resolved "https://registry.yarnpkg.com/csv-parse/-/csv-parse-5.5.2.tgz#ab525e642093dccff7c5cca5c7b71fd3e99fe8f2"
+  integrity sha512-YRVtvdtUNXZCMyK5zd5Wty1W6dNTpGKdqQd4EQ8tl/c6KW1aMBB1Kg1ppky5FONKmEqGJ/8WjLlTNLPne4ioVA==
+
 csvtojson@^2.0.10:
   version "2.0.10"
   resolved "https://registry.npmjs.org/csvtojson/-/csvtojson-2.0.10.tgz"

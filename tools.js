@@ -1,5 +1,4 @@
 const toolsConfig = {
-    "USD_Est": 5.00,
     "tributos": 0.1215,
     "markup": 0.1,
     "tools": [
@@ -25,7 +24,7 @@ const toolsConfig = {
             "customName": data => `Dynatrace - DEM Unit (${Number(data.options.dyna_dem)})`,
             "isDolar": false,
             "steps": [
-                { "type": "function", "fn": (data) => { return isNaN(data.options.dyna_dem) ? 'N/A' : Number(data.options.dyna_dem) / 1000000  * 3250.75; } },
+                { "type": "function", "fn": (data) => { return isNaN(data.options.dyna_dem) ? 'N/A' : Number(data.options.dyna_dem) / 1000000 * 3250.75; } },
             ]
         }, {
             "solution": "Gestão de Chamados",
@@ -56,7 +55,7 @@ const toolsConfig = {
             "isDolar": false,
             "steps": [
                 { "type": "function", "fn": (data) => { return data.services; } },
-                { "type": "filter", "field": "serviceId", "operator": "in", "value": ["AmazonEC2"] },
+                { "type": "filter", "field": "serviceId", "operator": "in", "value": ["AmazonEC2","Virtual Machines"] },
                 { "type": "sum", "field": "total" },
                 { "type": "function", "fn": (data) => { return data * 0.0106; } }
             ],
@@ -159,6 +158,14 @@ const toolsConfig = {
                     "operator": "eq",
                     "value": "SIM"
                 }
+            ]
+        }, {
+            "solution": "Suporte do Fornecedor",
+            "name": "Enterprise Support / Advanced Support",
+            "isDolar": false,
+            "steps": [
+                // Reaplicar Dolar
+                { "type": "function", "fn": (data) => { return data.totalCost * (data.processor.type == 'AWS' ? 0.06 : 0.01); } },
             ]
         }
     ]

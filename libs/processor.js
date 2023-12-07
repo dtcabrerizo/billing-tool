@@ -1,5 +1,5 @@
-const { options } = require("../routes");
-const { runStep,aggregateTest } = require("./util");
+const Dollar = require("./dollar");
+const { runStep, aggregateTest } = require("./util");
 
 const indiceComplexidade = {
     'compute': 2,
@@ -36,23 +36,24 @@ class Processor {
         // Calcula serviços
         console.log('Calculando serviços...');
 
+        // Cria um array para armazenar os serviços que não forem incluídos em um grupo
         let otherServices = [...data];
 
+        // Inicia processamento dos serviços
         const services = this.config.services.reduce((acc, service, index) => {
-
-            // if (service.serviceId.indexOf('Pipeline') >= 0) debugger;
-
-            // console.log(`(${index + 1}/${this.config.services.length}) Executando Serviço: ${service.serviceId}...`);
 
             // Verifica se existe um filtro customizado além do ProductID
             const serviceOptions = service.customMainFilter ?
                 { type: 'filter', ...service.customMainFilter } :
                 { type: 'filter', field: '_serviceId', value: service.serviceId, operator: 'eq' }
 
+            // Executa passos de filtros customizados 
             const serviceData = runStep(data, serviceOptions);
 
+            // Remove os serviços filtrados da lista de serviços excluídos
             otherServices = otherServices.filter(it => !serviceData.some(svc => svc == it));
 
+            // Variável para armazenar observações sobre o serviço
             let remarks = [];
 
             // Lista itens do billing através dos filtros
@@ -61,11 +62,14 @@ class Processor {
                 return acc;
             }, serviceData) || serviceData;
 
+            // Caso algum item tenha adicionado um aviso, adiciona o aviso à variável do serviço
             if (items.remarks) remarks.push(...items.remarks);
 
             // Verifica se encontrou registros mas filtrou todos
             if (serviceData.length > 0 && items.length === 0) {
+                // Adiciona aviso se todos os registros encotrados foram filtrados
                 remarks.push(`Encontrados ${serviceData.length} registros, porém foram todos filtrados`);
+                // Zera a quantidade dos itens para não afetar no cálculo
                 items.push(...serviceData.map(it => {
                     it._quantity = 0;
                     return it;
@@ -102,6 +106,12 @@ class Processor {
 
             return acc;
         }, []);
+
+        // Calcula custo total de nuvem
+        const totalCost = this.config.totalCost?.reduce((acc, step) => {
+            acc = runStep(acc, step);
+            return acc;
+        }, data);
 
 
         // Lista as VMs contidas no billing, executando os steps de filtro
@@ -141,23 +151,23 @@ class Processor {
         const tools = toolsConfig.tools.map(tool => {
             // copia objeto da ferramenta atual pzra objeto de retorno
             const ret = Object.assign({}, tool);
-            
+
             // Se a ferramenta tem uma condição, executa a condição
             if (tool?.conditions?.length > 0) {
                 // Validação da condição
                 const validateTest = aggregateTest(options, tool.conditionsAggregator || 'or', tool.conditions);
-                
+
                 // Se a condição falhou, retorna 0
                 if (!validateTest) {
                     ret.value = 'N/A';
                     return ret;
                 }
-            } 
+            }
 
             // Verifica se a ferramenta tem passos para cálculo ou é fixo 
             if (tool.steps) {
                 // Monta objeto inicial dos passos de execução
-                ret.base = { services, vm, rds, options };
+                ret.base = { services, vm, rds, options, totalCost, processor: this };
                 // Executa cada passo, retro alimentando a resposta do passo anterior
                 tool.steps.forEach(step => {
                     ret.base = runStep(ret.base, step);
@@ -169,10 +179,10 @@ class Processor {
             }
 
             // Aplica taxa de dólar se tiver configurado 
-            ret.value = ret.base * (tool.isDolar ? toolsConfig.USD_Est : 1);
+            ret.value = ret.base * (tool.isDolar ? Dollar.value : 1);
             // Aplica tibutos e markup
             ret.value = ret.value / (1 - toolsConfig.tributos - toolsConfig.markup);
-            
+
             // Se a ferramenta tem um nome customizado, altera o nome atual
             if (ret.customName) ret.name = ret.customName({ options });
 
@@ -184,7 +194,7 @@ class Processor {
         tools.total = tools.reduce((acc, it) => acc += isNaN(it.value) ? 0 : it.value, 0);
 
         // Monta objeto de retorno
-        const result = { vm, rds, tools };
+        const result = { vm, rds, tools, totalCost };
 
         // Agrupa serviços nos grupos configurados
         result.groups = runStep(services, { type: 'groupby', field: 'group' });
@@ -215,25 +225,18 @@ class Processor {
         result.complexidade = Object.values(result.groups).reduce((acc, group) => acc += group.complexidade, 0);
 
 
+        // Ajusta os itens dos serviços que não foram atribu[idos a nenhum grupo]
         otherServices = otherServices.map(it => {
             return Object.entries(this.config.itemOutput).reduce((acc, [key, value]) => {
                 acc[key] = it[value];
                 return acc;
             }, {});
         });
-
+        // Agrupa os serviços dentro de um grupo
         otherServices = runStep(otherServices || [], { type: 'groupby', field: 'ServiceId' });
-
         result.groups.otherServices = Object.entries(otherServices).map(([serviceId, items]) => {
             return { serviceId, items };
         });
-
-
-        // Calcula custo total de nuvem
-        result.totalCost = this.config.totalCost?.reduce((acc, step) => {
-            acc = runStep(acc, step);
-            return acc;
-        }, data);
 
         // Retorna objeto com as informações do billing
         return result;
