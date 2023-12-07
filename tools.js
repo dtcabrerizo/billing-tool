@@ -1,3 +1,5 @@
+const Dollar = require("./libs/dollar");
+
 const toolsConfig = {
     "tributos": 0.1215,
     "markup": 0.1,
@@ -163,9 +165,17 @@ const toolsConfig = {
             "solution": "Suporte do Fornecedor",
             "name": "Enterprise Support / Advanced Support",
             "isDolar": false,
+            "conditionsAggregator": 'or',
+            "conditions": [
+                {
+                    "field": "chkSuporte",
+                    "operator": "eq",
+                    "value": "on"
+                }
+            ],
             "steps": [
                 // Reaplicar Dolar
-                { "type": "function", "fn": (data) => { return data.totalCost * (data.processor.type == 'AWS' ? 0.06 : 0.01); } },
+                { "type": "function", "fn": (data) => { return data.totalCost * Dollar.value * (data.processor.type == 'AWS' ? 0.06 : 0.01); } },
             ]
         }
     ]
