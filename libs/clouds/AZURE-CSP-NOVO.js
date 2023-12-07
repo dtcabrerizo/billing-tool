@@ -1,11 +1,11 @@
-const azureConfig = require('../clouds/azure-csp-light.config');
-const Processor = require('./processor');
-const VMs = require('../assets/AZURE-VMS.json');
+const azureConfig = require('../../clouds/azure-csp-novo.config');
+const Processor = require('../processor');
+const VMs = require('../../assets/AZURE-VMS.json');
 
 
-class AzureCSPLight extends Processor {
-    type = 'Azure-CSP-Light';
-    A1Cell = 'BillingAccountId';
+class AzureCSPNovo extends Processor {
+    type = 'Azure-CSP-Novo';
+    A1Cell = 'invoiceId';
 
     constructor() {
         super();
@@ -26,4 +26,4 @@ class AzureCSPLight extends Processor {
 
 }
 
-module.exports = AzureCSPLight;
+module.exports = AzureCSPNovo;

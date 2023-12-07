@@ -1,7 +1,7 @@
-const awsConfig = require('../clouds/aws.config');
-const Processor = require('./processor');
-const VMs = require('../assets/AWS-EC2.json');
-const RDSs = require('../assets/AWS-RDS.json');
+const awsConfig = require('../../clouds/aws.config');
+const Processor = require('../processor');
+const VMs = require('../../assets/AWS-EC2.json');
+const RDSs = require('../../assets/AWS-RDS.json');
 
 class AWS extends Processor {
     type = 'AWS';

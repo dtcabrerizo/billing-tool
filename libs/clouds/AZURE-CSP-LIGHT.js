@@ -1,11 +1,11 @@
-const azureConfig = require('../clouds/azure-new-ea.config');
-const Processor = require('./processor');
-const VMs = require('../assets/AZURE-VMS.json');
+const azureConfig = require('../../clouds/azure-csp-light.config');
+const Processor = require('../processor');
+const VMs = require('../../assets/AZURE-VMS.json');
 
 
-class AzureNewEA extends Processor {
-    type = 'AzureNew-EA';
-    A1Cell = 'IdDaContaDeCobrança (BillingAccountId)';
+class AzureCSPLight extends Processor {
+    type = 'Azure-CSP-Light';
+    A1Cell = 'BillingAccountId';
 
     constructor() {
         super();
@@ -26,4 +26,4 @@ class AzureNewEA extends Processor {
 
 }
 
-module.exports = AzureNewEA;
+module.exports = AzureCSPLight;
