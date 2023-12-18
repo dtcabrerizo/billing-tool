@@ -48,10 +48,10 @@ const processor = { type: 'OCI' };
 processor.run = ({ usageData, costData }, options) => {
 
     const data = Object.entries(usageData).map(([key, value]) => ({ ServiceId: key, Quantity: value, Description: key }));
-    let otherServices = [...data];
+    const result = {otherServices: [...data]};
 
     const services = OCIConfig.services.reduce((acc, service) => {
-
+        // if (service.serviceId == 'API Gateway') debugger;
 
         // Variável para armazenar observações sobre o serviço
         let remarks = [];
@@ -63,7 +63,7 @@ processor.run = ({ usageData, costData }, options) => {
         }, data) || data;
 
         // Remove os serviços filtrados da lista de serviços excluídos
-        otherServices = otherServices.filter(it => !items.some(svc => svc == it));
+        result.otherServices = result.otherServices.filter(it => !items.some(svc => svc == it));
 
         // Caso algum item tenha adicionado um aviso, adiciona o aviso à variável do serviço
         if (items.remarks) remarks.push(...items.remarks);
@@ -84,10 +84,17 @@ processor.run = ({ usageData, costData }, options) => {
 
     }, []);
 
-    const result = {};
 
     // Agrupa serviços nos grupos configurados
     result.groups = runStep(services, { type: 'groupby', field: 'group' });
+
+
+    // Agrupa os serviços dentro de um grupo
+    result.otherServices = runStep(result.otherServices || [], { type: 'groupby', field: 'ServiceId' });
+    result.groups.otherServices = Object.entries(result.otherServices).map(([serviceId, items]) => {
+        return { serviceId, items };
+    });
+
 
     // Calcula complexidade e volumetria de cada grupo
     // Complexidade considera a soma da volumetria de todos os serviços divido por 4, ou 1 se for maior que 4
@@ -113,8 +120,13 @@ processor.run = ({ usageData, costData }, options) => {
     result.volumetria = Object.values(result.groups).reduce((acc, group) => acc += group.volumetria, 0);
     result.complexidade = Object.values(result.groups).reduce((acc, group) => acc += group.complexidade, 0);
 
-    result.totalCost = costData.Total;
-    result.vm = [];
+    result.totalCost = (costData.Total || costData['Total (BRL)']) / Dollar.value;
+    // Lista as VMs contidas no billing, executando os steps de filtro
+    result.vm = OCIConfig.vm?.steps?.reduce((acc, step) => {
+        acc = runStep(acc, step);
+        return acc;
+    }, [...data]);;
+
     result.rds = [];
 
 
