@@ -220,7 +220,9 @@ class Processor {
         });
 
         result.volumetria = Object.values(result.groups).reduce((acc, group) => acc += group.volumetria, 0);
-        result.complexidade = Math.max(1, Object.values(result.groups).reduce((acc, group) => acc += group.complexidade, 0));
+
+        const sumComplexidade = Object.values(result.groups).reduce((acc, group) => acc += group.complexidade, 0);
+        result.complexidade = sumComplexidade > 0 ? Math.max(1, sumComplexidade) : 0;
 
         
         // Ajusta os itens dos serviços que não foram atribu[idos a nenhum grupo]
