@@ -20,7 +20,8 @@ const ociConfig = {
             "steps": [
                 { "type": "filter", "field": "ServiceId", "operator": "sw", "value": "Block Storage" },
                 { "type": "filter", "field": "ServiceId", "operator": "ct", "value": "(GB Months)" },
-                { "type": "filter", "field": "ServiceId", "operator": "nct", "value": "Performance Units" }
+                { "type": "filter", "field": "ServiceId", "operator": "nct", "value": "Performance Units" },
+                { "type": "filter", "field": "ServiceId", "operator": "nct", "value": "Free (GB Months)" }
             ], "reference": 5120, "increment": 10
         }, {
             "serviceId": "Load Balancers",
@@ -83,8 +84,13 @@ const ociConfig = {
             "steps": [
                 { "type": "filter", "field": "ServiceId", "operator": "ct", "value": "(OCPU Hours)" },
                 {
-                    "type": "function", 
-                    "fn": data => data.filter(it => it.ServiceId.toString().startsWith('Database / Oracle Autonomous') || it.ServiceId.toString().startsWith('MySQL / MySQL Database'))
+                    "type": "function",
+                    "fn": data => data.filter(it =>
+                        it.ServiceId.toString().startsWith('Database / Oracle Autonomous')
+                        || it.ServiceId.toString().startsWith('MySQL / MySQL Database')
+                        || it.ServiceId.toString().startsWith('Database / Database Cloud Service')
+                        || it.ServiceId.toString().startsWith('Database / Database Exadata XP')
+                    )
                 },
             ], "reference": 720, "increment": 5
         }, {
@@ -94,6 +100,48 @@ const ociConfig = {
                 { "type": "filter", "field": "ServiceId", "operator": "sw", "value": "Functions / Oracle Functions" },
                 { "type": "filter", "field": "ServiceId", "operator": "ct", "value": "(requests)" },
             ], "reference": 100000000, "increment": 2
+        }, {
+            "serviceId": "Data Flow",
+            "group": "database",
+            "steps": [
+                { "type": "filter", "field": "ServiceId", "operator": "sw", "value": "Data Flow" },
+                { "type": "filter", "field": "ServiceId", "operator": "ct", "value": "Block Volume (GB Months)" },
+            ], "reference": 1024, "increment": 5
+        }, {
+            "serviceId": "File Storage",
+            "group": "compute",
+            "steps": [
+                { "type": "filter", "field": "ServiceId", "operator": "sw", "value": "File Storage" },
+                { "type": "filter", "field": "ServiceId", "operator": "ct", "value": "File Storage (GB Months)" },
+            ], "reference": 4096, "increment": 3
+        }, {
+            "serviceId": "GoldenGate",
+            "group": "database",
+            "steps": [
+                { "type": "filter", "field": "ServiceId", "operator": "sw", "value": "GoldenGate" },
+                { "type": "filter", "field": "ServiceId", "operator": "ct", "value": "(OCPU Hours)" },
+            ], "reference": 720, "increment": 3
+        }, {
+            "serviceId": "Object Storage",
+            "group": "compute",
+            "steps": [
+                { "type": "filter", "field": "ServiceId", "operator": "sw", "value": "Object Storage" },
+                { "type": "filter", "field": "ServiceId", "operator": "ct", "value": " - Storage (GB Months)" },
+            ], "reference": 5120, "increment": 10
+        }, {
+            "serviceId": "OCI Network Firewall",
+            "group": "security",
+            "steps": [
+                { "type": "filter", "field": "ServiceId", "operator": "sw", "value": "OCI Network Firewall" },
+                { "type": "filter", "field": "ServiceId", "operator": "ct", "value": "(Instance Per Hour)" },
+            ], "reference": 720, "increment": 10
+        }, {
+            "serviceId": "OCI Managed Redis Service",
+            "group": "security",
+            "steps": [
+                { "type": "filter", "field": "ServiceId", "operator": "sw", "value": "OCI Managed Redis Service" },
+                { "type": "filter", "field": "ServiceId", "operator": "ct", "value": "(Redis Memory GB hours)" },
+            ], "reference": 2048, "increment": 10
         }
     ],
     "vm": {
