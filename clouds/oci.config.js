@@ -11,7 +11,7 @@ const ociConfig = {
             "group": "compute",
             "steps": [
                 { "type": "filter", "field": "ServiceId", "operator": "sw", "value": "Compute" },
-                { "type": "filter", "field": "ServiceId", "operator": "ct", "value": "(OCPU Hours)" },
+                { "type": "function", "fn": data => data.filter(d => /\((OCPU Per Hour|OCPU Hours)\)/.test(d.ServiceId)) },
                 { "type": "filter", "field": "ServiceId", "operator": "nct", "value": "Windows OS" }
             ], "reference": 720, "increment": 10
         }, {
