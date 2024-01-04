@@ -35,10 +35,10 @@ const getData = (file) => {
         return records;
     } else {
         // Abre arquivo Excel do billing
-        const file = xlsx.read(req.files.billing.data);
+        const xlsFile = xlsx.read(file.data);
 
         // pega a primeira planiha do arquivo
-        return xlsx.utils.sheet_to_json(file?.sheets[0]);
+        return xlsx.utils.sheet_to_json(xlsFile?.sheets[0]);
     }
 
 }
