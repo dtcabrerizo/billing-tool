@@ -179,7 +179,7 @@ const toolsConfig = {
                     "type": "function", "fn": (data) => {
                         if (data.processor.type == 'AWS') {
                             return data.totalCost * Dollar.value * 0.06;
-                        } else if (data.processor.type == 'AZURE') {
+                        } else if (data.processor.type.toString().startsWith('Azure')) {
                             return data.totalCost * Dollar.value * 0.01;
                         } else {
                             return 0;
