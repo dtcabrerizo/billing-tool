@@ -207,7 +207,7 @@ const azureConfig = {
         }, {
             "serviceId": "SQL Managed Instance",
             "group": "database",
-            "customMainFilter": { "field": "SubcategoriaDoMedidor (MeterSubCategory)", "operator": "sw", "value": "SQL Managed Instance" },
+            "customMainFilter": { "field": "SubcategoriaDoMedidor (MeterSubCategory)", "operator": "ct", "value": "Managed Instance" },
             "steps": [
                 { "type": "filter", "field": "NomeDoMedidor (MeterName)", "operator": "ct", "value": "vCore" }
             ], "reference": 720, "increment": 5
