@@ -7,6 +7,7 @@
 const app = require('../app');
 const http = require('http');
 const Dollar = require('../libs/dollar');
+const { log } = require('../libs/util');
 
 /**
  * Get port from environment and store in Express.
@@ -95,7 +96,7 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  console.log('Listening on ' + bind);
+  log('Listening on ' + bind);
 }
 
 

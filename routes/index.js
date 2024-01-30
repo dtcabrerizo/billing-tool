@@ -7,13 +7,14 @@ const Dollar = require('../libs/dollar');
 
 const billing = require('../libs/procs/billing');
 const oci = require('../libs/procs/oci');
+const { log } = require('../libs/util');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
   res.render('index', { title: '"Bee"lling Tool', version: package.version });
 });
 
-router.post('/', async function (req, res, next) {
+router.post('/', function (req, res, next) {
   try {
 
     let fn;
@@ -30,6 +31,8 @@ router.post('/', async function (req, res, next) {
 
     // Se não encontrou processador de billing retorna erro
     if (!processor) throw new Error('Processador não encontrado');
+    
+    log(`Processando ${data.length} ...`);
 
     // Opções de execução
     const options = {

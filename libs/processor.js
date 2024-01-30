@@ -1,5 +1,6 @@
 const Dollar = require("./dollar");
-const { runStep, aggregateTest } = require("./util");
+const { runStep, aggregateTest, log } = require("./util");
+const cliProgress = require('cli-progress');
 
 const indiceComplexidade = {
     'compute': 2,
@@ -12,13 +13,18 @@ const indiceComplexidade = {
 
 
 class Processor {
- 
+
+    progressBar = new cliProgress.MultiBar({
+        clearOnComplete: true,
+        hideCursor: false,
+        format: ' {bar} | {service} | {value}/{total}'
+    }, cliProgress.Presets.shades_grey);
     config = {};
 
     run(data, options) {
         const toolsConfig = require('../tools');
 
-        console.log('Executando Step inicial...');
+        log('Executando Step inicial...');
 
         data.forEach(d => {
             d._quantity = d[this.config.itemOutput.Quantity];
@@ -32,10 +38,13 @@ class Processor {
         });
 
         // Calcula serviços
-        console.log('Calculando serviços...');
+        log('Calculando serviços...');
 
         // Cria um array para armazenar os serviços que não forem incluídos em um grupo
         let otherServices = [...data];
+
+
+        const progressSvc = this.progressBar.create(this.config.services.length, 0);
 
         // Inicia processamento dos serviços
         const services = this.config.services.reduce((acc, service, index) => {
@@ -102,6 +111,8 @@ class Processor {
             // Adiciona serviço na lista de retorno
             acc.push(tmpService);
 
+            progressSvc.increment();
+            
             return acc;
         }, []);
 
@@ -224,7 +235,7 @@ class Processor {
         const sumComplexidade = Object.values(result.groups).reduce((acc, group) => acc += group.complexidade, 0);
         result.complexidade = sumComplexidade > 0 ? Math.max(1, sumComplexidade) : 0;
 
-        
+
         // Ajusta os itens dos serviços que não foram atribu[idos a nenhum grupo]
         otherServices = otherServices.map(it => {
             return Object.entries(this.config.itemOutput).reduce((acc, [key, value]) => {

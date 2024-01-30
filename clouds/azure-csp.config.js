@@ -1,3 +1,5 @@
+const { runStep } = require("../libs/util");
+
 const azureConfig = {
     "itemOutput": {
         "ServiceId": "MeterCategory",
@@ -262,7 +264,15 @@ const azureConfig = {
         "steps": [
             { "type": "filter", "field": "MeterCategory", "operator": "eq", "value": "Virtual Machines" },
             { "type": "filter", "field": "MeterSubCategory", "operator": "nct", "value": "Reservation" },
-            { "type": "groupby", "field": "ResourceURI" },
+            {
+                "type": "function", 
+                fn: 
+                    data => {
+                        let field = 'ResourceURI';
+                        if (data[0] && data[0].hasOwnProperty('ResourceID')) field = 'ResourceId';
+                        return runStep(data, { "type": "groupby", field });
+                    }
+            },            
             {
                 "type": "function", 
                 fn:

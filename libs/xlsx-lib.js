@@ -1,4 +1,5 @@
 const ExcelJS = require('exceljs');
+const { log } = require('./util');
 
 const excel = new ExcelJS.Workbook();
 
@@ -17,6 +18,7 @@ class XLSXLib {
     }
 
     async getData() {
+        log('XLSX-LIB::Getdata');
         if (!this.sheet) throw new Error('Nenhuma planilha foi selecionada');
 
         // Obtém as colunas que estão os campos que precisam ser usados

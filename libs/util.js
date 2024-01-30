@@ -47,6 +47,11 @@ function aggregateTest(obj, aggregator, tests) {
             acc = acc && runTest(obj, test);
         }
         return acc;
-    }, aggregator == 'and');    
+    }, aggregator == 'and');
 }
-module.exports = { runStep, runTest, aggregateTest }
+
+function log(...args) {
+    console.log(`[${new Date().toISOString()}] `, ...args);
+}
+
+module.exports = { runStep, runTest, aggregateTest, log }
