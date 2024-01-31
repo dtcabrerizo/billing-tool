@@ -128,7 +128,7 @@ const awsConfig = {
             "serviceId": "awskms", "group": "security",
             "steps": [
                 { "type": "filter", "field": "UsageType", "operator": "ct", "value": "Requests" }
-            ], "reference": 1000, "increment": 100
+            ], "reference": 5000, "increment": 1000
         }, {
             "serviceId": "CloudHSM", "group": "security",
             "steps": [

@@ -135,7 +135,7 @@ const azureConfig = {
             "group": "security",
             "steps": [
                 { "type": "filter", "field": "meterName", "operator": "ct", "value": "Operations" }
-            ], "reference": 1000, "increment": 100
+            ], "reference": 5000, "increment": 1000
         }, { // REVISAR
             "serviceId": "Application Gateway",
             "group": "security",

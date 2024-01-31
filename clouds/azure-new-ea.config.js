@@ -138,7 +138,7 @@ const azureConfig = {
             "group": "security",
             "steps": [
                 { "type": "filter", "field": "NomeDoMedidor (MeterName)", "operator": "ct", "value": "Operations" }
-            ], "reference": 1000, "increment": 100
+            ], "reference": 5000, "increment": 1000
         }, {
             "serviceId": "Application Gateway",
             "group": "security",
