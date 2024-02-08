@@ -18,7 +18,7 @@ const toolsConfig = {
             "customName": data => `Dynatrace - DDUs (${Number(data.options.dyna_ddu)})`,
             "isDolar": false,
             "steps": [
-                { "type": "function", "fn": (data) => { return isNaN(data.options.dyna_ddu) ? 'N/A' : Number(data.options.dyna_ddu) / 1000000 * 994.26; } },
+                { "type": "function", "fn": (data) => { return isNaN(data.options.dyna_ddu) ? 'N/A' : Number(data.options.dyna_ddu) / 1000000 * 11931.14; } },
             ]
         }, {
             "solution": "Monitoramento",
@@ -26,7 +26,7 @@ const toolsConfig = {
             "customName": data => `Dynatrace - DEM Unit (${Number(data.options.dyna_dem)})`,
             "isDolar": false,
             "steps": [
-                { "type": "function", "fn": (data) => { return isNaN(data.options.dyna_dem) ? 'N/A' : Number(data.options.dyna_dem) / 1000000 * 3250.75; } },
+                { "type": "function", "fn": (data) => { return isNaN(data.options.dyna_dem) ? 'N/A' : Number(data.options.dyna_dem) / 1000000 * 39008.99; } },
             ]
         }, {
             "solution": "Gestão de Chamados",
