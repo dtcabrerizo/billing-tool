@@ -5,10 +5,10 @@ class Dollar {
     static value = null;
     static date = null;
 
-    static updateDollar() {
+    static updateDollar(curDate = new Date()) {
         console.log('Atualizando Dólar...');
 
-        const date = new Date();
+        const date = curDate;
 
         if (date.getDay() == 1) {
             date.setDate(date.getDate() - 3);
@@ -35,11 +35,16 @@ class Dollar {
 
                 let data = '';
                 res.on('data', chunk => data += chunk.toString());
-                res.on('end', () => {
+                res.on('end', async () => {
                     console.log('Dólar atualizado');
                     const json = JSON.parse(data);
-                    Dollar.value = json?.value?.[0]?.cotacaoVenda;
-                    Dollar.date = json?.value?.[0]?.dataHoraCotacao;
+                    if (json?.value?.[0]?.cotacaoVenda) {
+                        Dollar.value = json?.value?.[0]?.cotacaoVenda;
+                        Dollar.date = json?.value?.[0]?.dataHoraCotacao;
+                    } else {
+                        curDate.setDate(curDate.getDate() - 1);
+                        await this.updateDollar(curDate);
+                    }
                     resolve();
                 });
                 res.on('error', reject);
