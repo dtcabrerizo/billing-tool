@@ -49,14 +49,14 @@ const ociConfig = {
 
             ], "reference": 720, "increment": 10
         }, {
-            "serviceId": "OCVS",
+            "serviceId": "OCVS / VMWare Solution",
             "group": "compute",
             "steps": [
                 { "type": "filter", "field": "ServiceId", "operator": "sw", "value": "VMware" },
-                { "type": "filter", "field": "ServiceId", "operator": "ct", "value": "Oracle Cloud VMware Solution" },
-                { "type": "filter", "field": "ServiceId", "operator": "ct", "value": "(OCPU Per Hour)" }
+                { "type": "filter", "field": "ServiceId", "operator": "ct", "value": "VMware Solution" },
+                { "type": "filter", "field": "ServiceId", "operator": "regexp", "value": /.*\(OCPU Hours?\)/ }
 
-            ], "reference": 720, "increment": 10
+            ], "reference": 720, "increment": 20
         }, {
             "serviceId": "Container Image Storage",
             "group": "container",

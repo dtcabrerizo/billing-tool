@@ -36,6 +36,7 @@ function runTest(obj, { field, operator, value }) {
     if (operator == 'nsw') return obj[field]?.toString().toLowerCase().startsWith(value?.toString().toLowerCase());
     if (operator == 'ew') return obj[field]?.toString().toLowerCase().endsWith(value?.toString().toLowerCase());
     if (operator == 'new') return obj[field]?.toString().toLowerCase().endsWith(value?.toString().toLowerCase());
+    if (operator == 'regexp') return new RegExp(value).test(obj[field]);
     return false;
 }
 
