@@ -15,9 +15,9 @@ const indiceComplexidade = {
 class Processor {
 
     progressBar = new cliProgress.MultiBar({
-        clearOnComplete: true,
+        clearOnComplete: false,
         hideCursor: false,
-        format: ' {bar} | {service} | {value}/{total}'
+        format: ' {bar} | {service} | {value}/{total}\n'
     }, cliProgress.Presets.shades_grey);
     config = {};
 
@@ -45,6 +45,7 @@ class Processor {
 
 
         const progressSvc = this.progressBar.create(this.config.services.length, 0);
+        progressSvc.update(0, {service: 'Serviços'});
 
         // Inicia processamento dos serviços
         const services = this.config.services.reduce((acc, service, index) => {

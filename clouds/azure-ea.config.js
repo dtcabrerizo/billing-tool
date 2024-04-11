@@ -119,6 +119,10 @@ const azureConfig = {
         }, {
             "serviceId": "VPN Gateway",
             "group": "network",
+            "steps": [
+                { "type": "filter", "field": "Meter Name", "operator": "regexp", "value": /(Basic Gateway|VpnGw*)/ }
+
+            ],
             "reference": 720, "increment": 1
         }, {
             "serviceId": "ExpressRoute",
