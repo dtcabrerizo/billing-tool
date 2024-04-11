@@ -1,4 +1,6 @@
 const https = require('https');
+const fs = require('fs');
+const lastFile = 'lastValue.json';
 
 class Dollar {
 
@@ -36,22 +38,44 @@ class Dollar {
                 let data = '';
                 res.on('data', chunk => data += chunk.toString());
                 res.on('end', async () => {
-                    console.log('Dólar atualizado');
-                    const json = JSON.parse(data);
-                    if (json?.value?.[0]?.cotacaoVenda) {
-                        Dollar.value = json?.value?.[0]?.cotacaoVenda;
-                        Dollar.date = json?.value?.[0]?.dataHoraCotacao;
-                    } else {
-                        curDate.setDate(curDate.getDate() - 1);
-                        await this.updateDollar(curDate);
+                    try {
+                        console.log('Dólar atualizado');
+                        const json = JSON.parse(data);
+                        if (json?.value?.[0]?.cotacaoVenda) {
+                            Dollar.value = json?.value?.[0]?.cotacaoVenda;
+                            Dollar.date = json?.value?.[0]?.dataHoraCotacao;
+                            console.log(`Valor do dolar atualizado: ${Dollar.value} (${Dollar.date})`);
+                            fs.writeFileSync(lastFile, data);
+                        } else {
+                            curDate.setDate(curDate.getDate() - 1);
+                            await this.updateDollar(curDate);
+                        }
+                        resolve();
+                    } catch (error) {
+                        console.error(`Não foi possível atualizar o valor do Dolar!`);
+                        if (fs.existsSync(lastFile)) {
+                            const fileStream = fs.readFileSync(lastFile);
+                            const json = JSON.parse(fileStream.toString());
+                            if (json?.value?.[0]?.cotacaoVenda) {
+                                Dollar.value = json?.value?.[0]?.cotacaoVenda;
+                                Dollar.date = json?.value?.[0]?.dataHoraCotacao;
+                                console.warn(`Utilizando último valor do dolar válido: ${Dollar.value} (${Dollar.date})`);
+                            }
+                        } else {
+                            reject(`Valor de dolar não encontrado`);
+                        }
+                        resolve();
                     }
-                    resolve();
                 });
-                res.on('error', reject);
+                res.on('error', e => {
+                    reject(e);
+                });
                 res.send
             });
 
-            req.on('error', reject);
+            req.on('error', e => {
+                reject(e);
+            });
             req.end();
         });
     }
