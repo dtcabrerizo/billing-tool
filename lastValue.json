@@ -1,8 +1,1 @@
-{
-    "value": [
-        {
-            "cotacaoVenda": 5.0074,
-            "dataHoraCotacao":"2024-04-11 18:05:11.918"
-        }
-    ]
-}
+{"@odata.context":"https://was-p.bcnet.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata$metadata#_CotacaoDolarDia(cotacaoVenda,dataHoraCotacao)","value":[{"cotacaoVenda":5.06100,"dataHoraCotacao":"2024-05-07 13:05:59.873"}]}
