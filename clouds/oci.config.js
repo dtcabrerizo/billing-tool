@@ -142,6 +142,27 @@ const ociConfig = {
                 { "type": "filter", "field": "ServiceId", "operator": "sw", "value": "OCI Managed Redis Service" },
                 { "type": "filter", "field": "ServiceId", "operator": "ct", "value": "(Redis Memory GB hours)" },
             ], "reference": 2048, "increment": 10
+        }, {
+            "serviceId": "Oracle Web Application Firewall",
+            "group": "security",
+            "steps": [
+                { "type": "filter", "field": "ServiceId", "operator": "sw", "value": "Oracle Web Application Firewall" },
+                { "type": "filter", "field": "ServiceId", "operator": "ct", "value": " - Requests" },
+            ], "reference": 100, "increment": 10
+        }, {
+            "serviceId": "OCI Queue",
+            "group": "serverless",
+            "steps": [
+                { "type": "filter", "field": "ServiceId", "operator": "sw", "value": "Oracle Cloud Infrastructure Queue" },
+                { "type": "filter", "field": "ServiceId", "operator": "ct", "value": " (Message Count)" },
+            ], "reference": 100, "increment": 1
+        }, {
+            "serviceId": "Container Engine for Kubernetes",
+            "group": "container",
+            "steps": [
+                { "type": "filter", "field": "ServiceId", "operator": "sw", "value": "Container Engine for Kubernetes" },
+                { "type": "filter", "field": "ServiceId", "operator": "ct", "value": " (Cluster Per Hour)" },
+            ], "reference": 24, "increment": 1
         }
     ],
     "vm": {
