@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <title>
     <%= title %>
   </title>
   <meta charset="UTF-8" />
   <meta http-equiv="content-language" content="pt_BR">
-  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <link rel='stylesheet' href='http://<%= host %>/stylesheets/style.css' />
 
   <!-- CSS only -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
@@ -16,16 +15,22 @@
 </head>
 
 <body class="container my-4">
-  <h1 class="d-flex align-items-center gap-4 c-header">
-    <% if (type=='AWS' ) { %> <img src="/images/aws.svg"> <% } %>
-    <% if (type=='Azure-CSP' ) { %> <img src="/images/azure-csp.svg"> <% } %>
-    <% if (type=='Azure-EA' ) { %> <img src="/images/azure-ea.svg"> <% } %>
-    <% if (type=='AzureNew-EA' ) { %> <img src="/images/azure-new-ea.svg"> <% } %>
-    <% if (type=='Azure-CSP-Light' ) { %> <img src="/images/azure-csp-light.svg"> <% } %>
-    <% if (type=='Azure-CSP-Novo' ) { %> <img src="/images/azure-csp-novo.svg"> <% } %>
-    <% if (type=='OCI' ) { %> <img src="/images/oracle.svg"> <% } %>
-    <div class="py-4">Resultado</div>
-  </h1>
+
+  <div class="row">
+    <h1 class="d-flex align-items-center gap-4 c-header col-sm-auto">
+      <% if (type=='AWS' ) { %> <img src="http://<%= host %>/images/aws.svg"> <% } %>
+      <% if (type=='Azure-CSP' ) { %> <img src="http://<%= host %>/images/azure-csp.svg"> <% } %>
+      <% if (type=='Azure-EA' ) { %> <img src="http://<%= host %>/images/azure-ea.svg"> <% } %>
+      <% if (type=='AzureNew-EA' ) { %> <img src="http://<%= host %>/images/azure-new-ea.svg"> <% } %>
+      <% if (type=='Azure-CSP-Light' ) { %> <img src="http://<%= host %>/images/azure-csp-light.svg"> <% } %>
+      <% if (type=='Azure-CSP-Novo' ) { %> <img src="http://<%= host %>/images/azure-csp-novo.svg"> <% } %>
+      <% if (type=='OCI' ) { %> <img src="http://<%= host %>/images/oracle.svg"> <% } %>
+      <div class="py-4">Resultado</div>
+    </h1>
+    <div class="col align-content-center col text-end">
+      <button class="btn btn-danger" onclick="download()">Baixar</button>
+    </div>
+  </div>
   <small>Arquivos: <%= Object.values(files).map(i => i.name).join(', ') %> | Dólar: <%= Intl.NumberFormat('pt-br', {style: 'currency' , currency: 'BRL', minimumFractionDigits: 4 }).format(dollar) %> (<%= dollarDate %>)</small>
 
   <table class="table table-sm">
@@ -310,6 +315,14 @@
     }
   });
   
+
+  function download() {
+    const content = document.querySelector('html').outerHTML;
+    var a = document.createElement("a"); 
+    a.href = "data:text/html;charset=utf-8," + encodeURIComponent(content);
+    a.download = '<%= Object.values(files)?.[0]?.name %>' + 'print.html';
+    a.click();
+  }
 
 </script>
 

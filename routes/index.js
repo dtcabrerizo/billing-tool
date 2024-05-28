@@ -47,7 +47,7 @@ router.post('/', function (req, res, next) {
     const dollarDate = req.body.dollar ? 'custom' : Dollar.date;
 
     // Renderiza página de resultados
-    return res.render('result', { title: '"Bee"lling Tool', ...result, type: processor.type, files: req.files, options, version: package.version, dollar, dollarDate });
+    return res.render('result', { title: '"Bee"lling Tool', ...result, type: processor.type, files: req.files, options, version: package.version, dollar, dollarDate, host: req.get('host') });
 
   } catch (error) {
     next(error);
