@@ -47,6 +47,8 @@ const getData = (file) => {
 const processor = { type: 'OCI' };
 processor.run = ({ usageData, costData }, options) => {
 
+    const dollar = (Number(options.dollar) || Dollar.value);
+
     const data = Object.entries(usageData).map(([key, value]) => ({ ServiceId: key, Quantity: value, Description: key }));
     const result = {otherServices: [...data]};
 
@@ -120,7 +122,7 @@ processor.run = ({ usageData, costData }, options) => {
     result.volumetria = Object.values(result.groups).reduce((acc, group) => acc += group.volumetria, 0);
     result.complexidade = Object.values(result.groups).reduce((acc, group) => acc += group.complexidade, 0);
 
-    result.totalCost = (costData.Total || costData['Total (BRL)']) / Dollar.value;
+    result.totalCost = (costData.Total || costData['Total (BRL)']) / dollar;
     // Lista as VMs contidas no billing, executando os steps de filtro
     result.vm = OCIConfig.vm?.steps?.reduce((acc, step) => {
         acc = runStep(acc, step);
@@ -162,7 +164,7 @@ processor.run = ({ usageData, costData }, options) => {
         }
 
         // Aplica taxa de dólar se tiver configurado 
-        ret.value = ret.base * (tool.isDolar ? Dollar.value : 1);
+        ret.value = ret.base * (tool.isDolar ? dollar : 1);
         // Aplica tibutos e markup
         ret.value = ret.value / (1 - toolsConfig.tributos - toolsConfig.markup);
 

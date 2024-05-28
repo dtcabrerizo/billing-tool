@@ -24,6 +24,8 @@ class Processor {
     run(data, options) {
         const toolsConfig = require('../tools');
 
+        const dollar = (Number(options.dollar) || Dollar.value);
+
         log('Executando Step inicial...');
 
         data.forEach(d => {
@@ -45,7 +47,7 @@ class Processor {
 
 
         const progressSvc = this.progressBar.create(this.config.services.length, 0);
-        progressSvc.update(0, {service: 'Serviços'});
+        progressSvc.update(0, { service: 'Serviços' });
 
         // Inicia processamento dos serviços
         const services = this.config.services.reduce((acc, service, index) => {
@@ -113,7 +115,7 @@ class Processor {
             acc.push(tmpService);
 
             progressSvc.increment();
-            
+
             return acc;
         }, []);
 
@@ -121,7 +123,7 @@ class Processor {
         const totalCost = this.config.totalCost?.reduce((acc, step) => {
             acc = runStep(acc, step);
             return acc;
-        }, data);
+        }, data) / (this.config.totalCostIsDollar ? 1 : dollar);
 
 
         // Lista as VMs contidas no billing, executando os steps de filtro
@@ -189,7 +191,7 @@ class Processor {
             }
 
             // Aplica taxa de dólar se tiver configurado 
-            ret.value = ret.base * (tool.isDolar ? Dollar.value : 1);
+            ret.value = ret.base * (tool.isDolar ? dollar : 1);
             // Aplica tibutos e markup
             ret.value = ret.value / (1 - toolsConfig.tributos - toolsConfig.markup);
 

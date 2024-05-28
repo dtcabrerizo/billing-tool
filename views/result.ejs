@@ -26,7 +26,7 @@
     <% if (type=='OCI' ) { %> <img src="/images/oracle.svg"> <% } %>
     <div class="py-4">Resultado</div>
   </h1>
-  <small>Arquivos: <%= Object.values(files).map(i => i.name).join(', ') %> | Dólar: <%= Intl.NumberFormat('pt-br', {style: 'currency' , currency: 'BRL' }).format(Dollar.value) %> (<%= Dollar.date %>)</small>
+  <small>Arquivos: <%= Object.values(files).map(i => i.name).join(', ') %> | Dólar: <%= Intl.NumberFormat('pt-br', {style: 'currency' , currency: 'BRL', minimumFractionDigits: 4 }).format(dollar) %> (<%= dollarDate %>)</small>
 
   <table class="table table-sm">
     <thead>

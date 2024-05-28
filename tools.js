@@ -1,5 +1,3 @@
-const Dollar = require("./libs/dollar");
-
 const toolsConfig = {
     "tributos": 0.1215,
     "markup": 0.1,
@@ -164,7 +162,7 @@ const toolsConfig = {
         }, {
             "solution": "Suporte do Fornecedor",
             "name": "Enterprise Support / Advanced Support",
-            "isDolar": false,
+            "isDolar": true,
             "conditionsAggregator": 'or',
             "conditions": [
                 {
@@ -178,9 +176,9 @@ const toolsConfig = {
                 {
                     "type": "function", "fn": (data) => {
                         if (data.processor?.type == 'AWS') {
-                            return data.totalCost * Dollar.value * 0.06;
+                            return data.totalCost * 0.06;
                         } else if (data.processor?.type?.toString()?.startsWith('Azure')) {
-                            return data.totalCost * Dollar.value * 0.01;
+                            return data.totalCost * 0.01;
                         } else {
                             return 0;
                         }

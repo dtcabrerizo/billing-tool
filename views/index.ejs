@@ -73,10 +73,19 @@
         </div>
         <div class="card-body">
           <div class="row mb-3">
-            <label class="form-check-label form-control-sm w-auto">
-              <input type="checkbox" class="form-check-input me-3" name="chkSuporte">
-              Suporte ao fornecedor
-            </label>
+            <div class="col-md-6">
+              <label class="form-check-label form-control-sm">
+                <input type="checkbox" class="form-check-input" name="chkSuporte">
+                Suporte ao fornecedor
+              </label>
+            </div>
+            <div class="col-md-6">
+              <div class="input-group">
+                <label class="input-group-text" for="txDollar">Valor do Dólar:</label>
+                <input type="number" class="form-control form-control-sm" name="dollar" id="txDollar" step="0.0001"
+                  placeholder="<%= Dollar.value %>">
+              </div>
+            </div>
           </div>
           <div class="row">
             <div class="col-md-3">

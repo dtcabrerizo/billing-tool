@@ -6,6 +6,7 @@ const azureConfig = {
         "Quantity": "Quantity",
         "Description": "ProductName"
     },
+    "totalCostIsDollar": true,
     "totalCost": [
         { "type": "sum", "field": "PricingPreTaxTotal" },
         { "type": "function", fn: value => value * 1.2}

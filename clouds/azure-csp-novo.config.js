@@ -4,6 +4,7 @@ const azureConfig = {
         "Quantity": "quantity",
         "Description": "ProductName"
     },
+    "totalCostIsDollar": true,
     "totalCost": [
         { "type": "sum", "field": "costInUsd" }
     ],

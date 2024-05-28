@@ -11,7 +11,7 @@ const { log } = require('../libs/util');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  res.render('index', { title: '"Bee"lling Tool', version: package.version });
+  res.render('index', { title: '"Bee"lling Tool', version: package.version, Dollar });
 });
 
 router.post('/', function (req, res, next) {
@@ -43,8 +43,11 @@ router.post('/', function (req, res, next) {
     // Executa processador de billing
     const result = processor.run(data, options);
 
+    const dollar = (req.body.dollar || Dollar.value);
+    const dollarDate = req.body.dollar ? 'custom' : Dollar.date;
+
     // Renderiza página de resultados
-    return res.render('result', { title: '"Bee"lling Tool', ...result, type: processor.type, files: req.files, options, version: package.version, Dollar });
+    return res.render('result', { title: '"Bee"lling Tool', ...result, type: processor.type, files: req.files, options, version: package.version, dollar, dollarDate });
 
   } catch (error) {
     next(error);

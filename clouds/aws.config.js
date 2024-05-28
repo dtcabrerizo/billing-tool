@@ -9,6 +9,7 @@ const awsConfig = {
         { "type": "filter", "field": "LinkedAccountName", "operator": "neq", "value": "" },
         { "type": "filter", "field": "ProductCode", "operator": "neq", "value": null }
     ],
+    "totalCostIsDollar": true,
     "totalCost": [
         { "type": "filter", "field": "LinkedAccountName", "operator": "neq", "value": null },
         { "type": "filter", "field": "LinkedAccountName", "operator": "neq", "value": "" },

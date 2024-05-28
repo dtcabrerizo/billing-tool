@@ -4,9 +4,9 @@ const azureConfig = {
         "Quantity": "Consumed Quantity",
         "Description": "Product"
     },
+    "totalCostIsDollar": false,
     "totalCost": [
-        { "type": "sum", "field": "Custo (Cost)" },
-        { "type": 'function', "fn": data => data / 5.2 }
+        { "type": "sum", "field": "Custo (Cost)" }
     ],
     "services": [
         {
