@@ -162,7 +162,7 @@ const ociConfig = {
             "steps": [
                 { "type": "filter", "field": "ServiceId", "operator": "sw", "value": "Container Engine for Kubernetes" },
                 { "type": "filter", "field": "ServiceId", "operator": "ct", "value": " (Cluster Per Hour)" },
-            ], "reference": 24, "increment": 1
+            ], "reference": 720, "increment": 1
         }
     ],
     "vm": {
