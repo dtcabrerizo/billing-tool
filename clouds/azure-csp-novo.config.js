@@ -173,7 +173,9 @@ const azureConfig = {
             "serviceId": "Azure Database for (MySQL/PostgreSQL/MariaDB)",
             "group": "database",
             "customMainFilter": { "field": "meterCategory", "operator": "sw", "value": "Azure Database for" },
-            "reference": 720, "increment": 5
+            "steps": [
+                { "type": "filter", "field": "meterSubCategory", "operator": "ct", "value": "Compute" }                
+            ],"reference": 720, "increment": 5
         }, , {
             "serviceId": "SQL Database",
             "group": "database",
@@ -264,9 +266,11 @@ const azureConfig = {
     ],
     "vm": {
         "steps": [
+
+            
             { "type": "filter", "field": "meterCategory", "operator": "eq", "value": "Virtual Machines" },
             { "type": "filter", "field": "meterSubCategory", "operator": "nct", "value": "Reservation" },
-            { "type": "groupby", "field": "ResourceId" },
+            { "type": "groupby", "field": "resourceId" },
             {
                 "type": "function", 
                 fn:
@@ -301,7 +305,7 @@ const azureConfig = {
             { "type": "filter", "field": "meterCategory", "operator": "in", "value": ["SQL Database", "Azure Database for MySQL", "Azure Database for PostgreSQL",  "SQL Managed Instance"] },
             { "type": "filter", "field": "meterSubCategory", "operator": "nct", "value": "License" },
             { "type": "filter", "field": "meterSubCategory", "operator": "nct", "value": "Storage" },
-            { "type": "groupby", "field": "ResourceId" },
+            { "type": "groupby", "field": "resourceId" },
             {
                 "type": "function", 
                 fn:

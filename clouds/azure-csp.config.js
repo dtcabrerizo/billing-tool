@@ -176,7 +176,9 @@ const azureConfig = {
             "serviceId": "Azure Database for (MySQL/PostgreSQL/MariaDB)",
             "group": "database",
             "customMainFilter": { "field": "MeterCategory", "operator": "sw", "value": "Azure Database for" },
-            "reference": 720, "increment": 5
+            "steps": [
+                { "type": "filter", "field": "MeterSubCategory", "operator": "ct", "value": "Compute" }                
+            ],"reference": 720, "increment": 5
         }, , {
             "serviceId": "SQL Database",
             "group": "database",

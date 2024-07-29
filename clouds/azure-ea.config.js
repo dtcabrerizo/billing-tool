@@ -174,7 +174,7 @@ const azureConfig = {
             "group": "database",
             "customMainFilter": { "field": "Meter Category", "operator": "sw", "value": "Azure Database for" },
             "steps": [
-                { "type": "filter", "field": "Meter Name", "operator": "eq", "value": "vCore" }
+                { "type": "filter", "field": "Meter Sub-Category", "operator": "ct", "value": "Compute" }
             ], "reference": 720, "increment": 5
         }, {
             "serviceId": "SQL Database",
