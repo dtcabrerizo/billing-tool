@@ -12,7 +12,14 @@ const ociConfig = {
             "steps": [
                 { "type": "filter", "field": "ServiceId", "operator": "sw", "value": "Compute" },
                 { "type": "filter", "field": "ServiceId", "operator": "regexp", "value": /\((OCPU Per Hour|OCPU Hours)\)/ },
-                { "type": "filter", "field": "ServiceId", "operator": "nct", "value": "Windows OS" }
+                { "type": "filter", "field": "ServiceId", "operator": "nct", "value": "Windows OS" },
+                {
+                    "type": "function",
+                    fn: data => data.map(item => {
+                        item.Quantity = item.Quantity / 2;
+                        return item;
+                    })
+                }
             ], "reference": 720, "increment": 10
         }, {
             "serviceId": "Block Storage",
@@ -82,7 +89,7 @@ const ociConfig = {
             "serviceId": "Autonomous Database / MySQL Database",
             "group": "database",
             "steps": [
-                { "type": "filter", "field": "ServiceId", "operator": "ct", "value": "(OCPU Hours)" },
+                { "type": "filter", "field": "ServiceId", "operator": "regexp", "value": /\([OE]CPU Hours\)/ },
                 {
                     "type": "function",
                     "fn": data => data.filter(it =>
@@ -91,7 +98,13 @@ const ociConfig = {
                         || it.ServiceId.toString().startsWith('Database / Database Cloud Service')
                         || it.ServiceId.toString().startsWith('Database / Database Exadata XP')
                     )
-                },
+                },{
+                    "type": "function",
+                    fn: data => data.map(item => {
+                        item.Quantity = item.Quantity / 4;
+                        return item;
+                    })
+                }
             ], "reference": 720, "increment": 5
         }, {
             "serviceId": "Functions",
