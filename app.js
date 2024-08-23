@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(fileUpload({abortOnLimit: true, limits: {fileSize: 100 * 1024 * 1024 }}));
+app.use(fileUpload({abortOnLimit: true, limits: {fileSize: 500 * 1024 * 1024 }}));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
