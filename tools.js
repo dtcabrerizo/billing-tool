@@ -115,7 +115,7 @@ const toolsConfig = {
             "steps": [
                 { "type": "function", "fn": (data) => { return data.rds; } },
                 { "type": "sum", "field": "_calculatedQuantity" },
-                { "type": "function", "fn": (data) => { return data * 125; } }
+                { "type": "function", "fn": (data) => { return data * 0; } } // Zerado para desconsiderar o custo de Nazar
             ]
         }, {
             "solution": "Backup",
