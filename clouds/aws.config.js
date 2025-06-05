@@ -163,7 +163,8 @@ const awsConfig = {
         }, {
             "serviceId": "AmazonElastiCache", "group": "database",
             "steps": [
-                { "type": "filter", "field": "UsageType", "operator": "nct", "value": "BackupUsage" }
+                { "type": "filter", "field": "UsageType", "operator": "nct", "value": "BackupUsage" },
+                { "type": "filter", "field": "UsageType", "operator": "nct", "value": "Valkey" }
             ], "reference": 720, "increment": 10
         }, {
             "serviceId": "AmazonDynamoDB", "group": "database",
